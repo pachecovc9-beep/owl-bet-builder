@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import BettingTypeCard from '@/components/betting/BettingTypeCard';
 import BettingWizard from '@/components/betting/BettingWizard';
@@ -8,6 +9,7 @@ import { toast } from 'sonner';
 import heroBackground from '@/assets/hero-bg.png';
 
 const Index = () => {
+  const navigate = useNavigate();
   const [selectedType, setSelectedType] = useState<BettingType | null>(null);
   const [isWizardOpen, setIsWizardOpen] = useState(false);
 
@@ -39,7 +41,7 @@ const Index = () => {
   };
 
   const handleHistoryClick = () => {
-    toast.info('Histórico em desenvolvimento');
+    navigate('/history');
   };
 
   const handleSettingsClick = () => {

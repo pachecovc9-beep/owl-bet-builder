@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { BettingType, BettingGame, League, Team } from '@/types/betting';
-import { SUPPORTED_LEAGUES, BET_MARKETS } from '@/data/leagues';
+import { SUPPORTED_LEAGUES, BET_MARKETS, FALLBACK_TEAMS } from '@/data/leagues';
 import { Slider } from '@/components/ui/slider';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, AlertCircle, Eye } from 'lucide-react';
 import { toast } from 'sonner';
+import { getTeamsByLeague } from '@/utils/sportsApi';
+import BulletinPreview from './BulletinPreview';
 
 interface BettingWizardProps {
   isOpen: boolean;
@@ -27,9 +29,38 @@ const BettingWizard: React.FC<BettingWizardProps> = ({
   const [numGames, setNumGames] = useState(1);
   const [games, setGames] = useState<BettingGame[]>([]);
   const [stake, setStake] = useState<number>(10);
+  const [availableTeams, setAvailableTeams] = useState<Record<string, Team[]>>({});
+  const [loadingTeams, setLoadingTeams] = useState<string | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
   
   const isMultiple = bettingType === 'multiple' || bettingType === 'live-multiple';
   const maxGames = isMultiple ? 10 : 1;
+
+  useEffect(() => {
+    // Pre-load teams for popular leagues
+    const popularLeagues = ['English Premier League', 'Spanish La Liga'];
+    popularLeagues.forEach(league => {
+      loadTeamsForLeague(league);
+    });
+  }, []);
+
+  const loadTeamsForLeague = async (leagueName: string) => {
+    if (availableTeams[leagueName] || loadingTeams === leagueName) return;
+
+    setLoadingTeams(leagueName);
+    try {
+      const teams = await getTeamsByLeague(leagueName);
+      setAvailableTeams(prev => ({ ...prev, [leagueName]: teams }));
+    } catch (error) {
+      console.warn(`Failed to load teams for ${leagueName}, using fallback`);
+      setAvailableTeams(prev => ({ 
+        ...prev, 
+        [leagueName]: FALLBACK_TEAMS[leagueName] || [] 
+      }));
+    } finally {
+      setLoadingTeams(null);
+    }
+  };
 
   const handleNext = () => {
     if (step === 1) {
@@ -56,6 +87,12 @@ const BettingWizard: React.FC<BettingWizardProps> = ({
         toast.error('Por favor, preenche todos os campos dos jogos');
         return;
       }
+
+      // Check for low odds warning
+      const lowOddsGames = games.filter(game => game.odds < 1.5);
+      if (lowOddsGames.length > 0) {
+        toast.warning(`Atenção: ${lowOddsGames.length} jogo(s) com odds baixas (<1.5)`);
+      }
       
       setStep(3);
     }
@@ -78,6 +115,47 @@ const BettingWizard: React.FC<BettingWizardProps> = ({
   const getPotentialReturn = () => {
     return isMultiple ? (stake * getTotalOdds()).toFixed(2) : '0';
   };
+
+  const updateGameField = (index: number, field: string, value: any) => {
+    const updatedGames = [...games];
+    if (field.includes('.')) {
+      const [parent, child] = field.split('.');
+      const currentGame = updatedGames[index];
+      const parentObj = currentGame[parent as keyof BettingGame] as any;
+      updatedGames[index] = {
+        ...currentGame,
+        [parent]: { ...parentObj, [child]: value }
+      };
+    } else {
+      updatedGames[index] = { ...updatedGames[index], [field]: value };
+    }
+    setGames(updatedGames);
+  };
+
+  const handleLeagueChange = async (index: number, leagueId: string) => {
+    const league = SUPPORTED_LEAGUES.find(l => l.id.toString() === leagueId);
+    if (!league) return;
+
+    updateGameField(index, 'league', league);
+    
+    // Reset team selections
+    updateGameField(index, 'homeTeam', { id: 0, name: '', strTeam: '', logo: '', strTeamBadge: '', league: league.strLeague });
+    updateGameField(index, 'awayTeam', { id: 0, name: '', strTeam: '', logo: '', strTeamBadge: '', league: league.strLeague });
+    
+    // Load teams for this league
+    await loadTeamsForLeague(league.strLeague);
+  };
+
+  const createTempBulletin = () => ({
+    id: 'preview',
+    type: bettingType,
+    games,
+    stake: isMultiple ? stake : undefined,
+    totalOdds: getTotalOdds(),
+    potentialReturn: isMultiple ? parseFloat(getPotentialReturn()) : undefined,
+    createdAt: new Date(),
+    status: 'pending' as const
+  });
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -143,52 +221,96 @@ const BettingWizard: React.FC<BettingWizardProps> = ({
                     <h4 className="font-medium">Jogo {index + 1}</h4>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <Label>Equipa Casa</Label>
-                      <Input 
-                        placeholder="Ex: Benfica"
-                        value={game.homeTeam.name}
-                        onChange={(e) => {
-                          const updatedGames = [...games];
-                          updatedGames[index].homeTeam = {
-                            ...game.homeTeam,
-                            name: e.target.value,
-                            strTeam: e.target.value
-                          };
-                          setGames(updatedGames);
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <Label>Equipa Fora</Label>
-                      <Input 
-                        placeholder="Ex: Porto"
-                        value={game.awayTeam.name}
-                        onChange={(e) => {
-                          const updatedGames = [...games];
-                          updatedGames[index].awayTeam = {
-                            ...game.awayTeam,
-                            name: e.target.value,
-                            strTeam: e.target.value
-                          };
-                          setGames(updatedGames);
-                        }}
-                      />
-                    </div>
-                  </div>
+                   {/* League Selection */}
+                   <div className="mb-3">
+                     <Label>Competição</Label>
+                     <Select 
+                       value={game.league.id.toString()}
+                       onValueChange={(value) => handleLeagueChange(index, value)}
+                     >
+                       <SelectTrigger>
+                         <SelectValue placeholder="Seleciona a competição" />
+                       </SelectTrigger>
+                       <SelectContent>
+                         {SUPPORTED_LEAGUES.map((league) => (
+                           <SelectItem key={league.id} value={league.id.toString()}>
+                             {league.name} ({league.country})
+                           </SelectItem>
+                         ))}
+                       </SelectContent>
+                     </Select>
+                   </div>
+
+                   <div className="grid grid-cols-2 gap-3">
+                     <div>
+                       <Label>Equipa Casa</Label>
+                       {availableTeams[game.league.strLeague] ? (
+                         <Select
+                           value={game.homeTeam.id.toString()}
+                           onValueChange={(value) => {
+                             const team = availableTeams[game.league.strLeague].find(t => t.id.toString() === value);
+                             if (team) updateGameField(index, 'homeTeam', team);
+                           }}
+                         >
+                           <SelectTrigger>
+                             <SelectValue placeholder="Seleciona equipa" />
+                           </SelectTrigger>
+                           <SelectContent>
+                             {availableTeams[game.league.strLeague].map((team) => (
+                               <SelectItem key={team.id} value={team.id.toString()}>
+                                 {team.name}
+                               </SelectItem>
+                             ))}
+                           </SelectContent>
+                         </Select>
+                       ) : (
+                         <Input 
+                           placeholder={loadingTeams === game.league.strLeague ? "A carregar..." : "Ex: Benfica"}
+                           value={game.homeTeam.name}
+                           disabled={loadingTeams === game.league.strLeague}
+                           onChange={(e) => updateGameField(index, 'homeTeam.name', e.target.value)}
+                         />
+                       )}
+                     </div>
+                     <div>
+                       <Label>Equipa Fora</Label>
+                       {availableTeams[game.league.strLeague] ? (
+                         <Select
+                           value={game.awayTeam.id.toString()}
+                           onValueChange={(value) => {
+                             const team = availableTeams[game.league.strLeague].find(t => t.id.toString() === value);
+                             if (team) updateGameField(index, 'awayTeam', team);
+                           }}
+                         >
+                           <SelectTrigger>
+                             <SelectValue placeholder="Seleciona equipa" />
+                           </SelectTrigger>
+                           <SelectContent>
+                             {availableTeams[game.league.strLeague].map((team) => (
+                               <SelectItem key={team.id} value={team.id.toString()}>
+                                 {team.name}
+                               </SelectItem>
+                             ))}
+                           </SelectContent>
+                         </Select>
+                       ) : (
+                         <Input 
+                           placeholder={loadingTeams === game.league.strLeague ? "A carregar..." : "Ex: Porto"}
+                           value={game.awayTeam.name}
+                           disabled={loadingTeams === game.league.strLeague}
+                           onChange={(e) => updateGameField(index, 'awayTeam.name', e.target.value)}
+                         />
+                       )}
+                     </div>
+                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <Label>Mercado</Label>
-                      <Select 
-                        value={game.market}
-                        onValueChange={(value) => {
-                          const updatedGames = [...games];
-                          updatedGames[index].market = value as any;
-                          setGames(updatedGames);
-                        }}
-                      >
+                       <Select 
+                         value={game.market}
+                         onValueChange={(value) => updateGameField(index, 'market', value)}
+                       >
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
@@ -201,21 +323,31 @@ const BettingWizard: React.FC<BettingWizardProps> = ({
                         </SelectContent>
                       </Select>
                     </div>
-                    <div>
-                      <Label>Odd</Label>
-                      <Input 
-                        type="number"
-                        step="0.01"
-                        min="1.01"
-                        placeholder="2.00"
-                        value={game.odds}
-                        onChange={(e) => {
-                          const updatedGames = [...games];
-                          updatedGames[index].odds = parseFloat(e.target.value) || 1.01;
-                          setGames(updatedGames);
-                        }}
-                      />
-                    </div>
+                     <div>
+                       <Label>Odd</Label>
+                       <div className="relative">
+                         <Input 
+                           type="number"
+                           step="0.01"
+                           min="1.01"
+                           placeholder="2.00"
+                           value={game.odds}
+                           onChange={(e) => {
+                             const odds = parseFloat(e.target.value) || 1.01;
+                             updateGameField(index, 'odds', odds);
+                           }}
+                           className={game.odds < 1.5 ? "border-warning" : ""}
+                         />
+                         {game.odds < 1.5 && (
+                           <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                             <AlertCircle className="h-4 w-4 text-warning" />
+                           </div>
+                         )}
+                       </div>
+                       {game.odds < 1.5 && (
+                         <p className="text-xs text-warning mt-1">Odd baixa - Baixo EV</p>
+                       )}
+                     </div>
                   </div>
                 </div>
               ))}
@@ -282,10 +414,26 @@ const BettingWizard: React.FC<BettingWizardProps> = ({
               <Button onClick={handleBack} variant="outline" className="flex-1">
                 Voltar
               </Button>
+              <Button 
+                onClick={() => setShowPreview(!showPreview)} 
+                variant="outline" 
+                className="flex-1"
+              >
+                <Eye className="h-4 w-4 mr-2" />
+                {showPreview ? 'Ocultar' : 'Preview'}
+              </Button>
               <Button onClick={handleComplete} variant="premium" className="flex-1">
                 Criar Boletim
               </Button>
             </div>
+
+            {/* Live Preview */}
+            {showPreview && (
+              <div className="mt-6 p-4 border rounded-lg bg-muted/50">
+                <h4 className="font-semibold mb-4">Preview do Boletim</h4>
+                <BulletinPreview bulletin={createTempBulletin()} />
+              </div>
+            )}
           </div>
         )}
       </DialogContent>
