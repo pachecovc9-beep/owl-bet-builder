@@ -2,41 +2,60 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Betting Bulletin Generator Design System - Premium Sports Betting UI */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Base colors - Dark theme with golden accents */
+    --background: 220 13% 9%; /* #1A1A1A equivalent */
+    --foreground: 48 100% 95%; /* Light text */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 220 13% 12%; /* Slightly lighter than background */
+    --card-foreground: 48 100% 95%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 220 13% 10%;
+    --popover-foreground: 48 100% 95%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Golden primary theme */
+    --primary: 45 100% 50%; /* #FFD700 equivalent */
+    --primary-foreground: 220 13% 9%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 220 13% 15%;
+    --secondary-foreground: 48 100% 90%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 220 13% 16%;
+    --muted-foreground: 220 9% 65%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 45 100% 50%;
+    --accent-foreground: 220 13% 9%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 48 100% 95%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --success: 142 76% 36%;
+    --success-foreground: 48 100% 95%;
 
-    --radius: 0.5rem;
+    --border: 220 13% 20%;
+    --input: 220 13% 15%;
+    --ring: 45 100% 50%;
+
+    --radius: 0.75rem;
+
+    /* Premium gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(45 100% 50%), hsl(38 100% 45%));
+    --gradient-dark: linear-gradient(135deg, hsl(220 13% 9%), hsl(220 13% 12%));
+    --gradient-card: linear-gradient(135deg, hsl(220 13% 12%), hsl(220 13% 15%));
+    --gradient-betting: linear-gradient(135deg, hsl(45 100% 15%), hsl(45 100% 8%));
+
+    /* Premium shadows */
+    --shadow-glow: 0 0 40px hsl(45 100% 50% / 0.15);
+    --shadow-card: 0 10px 30px hsl(220 13% 3% / 0.3);
+    --shadow-premium: 0 20px 60px hsl(220 13% 3% / 0.4);
+
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
     --sidebar-background: 0 0% 98%;
 
@@ -100,6 +119,80 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-inter;
+  }
+}
+
+@layer components {
+  /* Premium betting app utilities */
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+  
+  .gradient-dark {
+    background: var(--gradient-dark);
+  }
+  
+  .gradient-card {
+    background: var(--gradient-card);
+  }
+  
+  .gradient-betting {
+    background: var(--gradient-betting);
+  }
+  
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+  
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+  
+  .shadow-premium {
+    box-shadow: var(--shadow-premium);
+  }
+  
+  .transition-smooth {
+    transition: var(--transition-smooth);
+  }
+  
+  .transition-bounce {
+    transition: var(--transition-bounce);
+  }
+
+  /* Betting card animations */
+  .betting-card {
+    @apply transition-smooth hover:scale-[1.02] hover:shadow-glow;
+  }
+
+  /* Premium button effects */
+  .btn-premium {
+    @apply relative overflow-hidden transition-all duration-300;
+  }
+  
+  .btn-premium::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent;
+    transform: translateX(-100%);
+    transition: transform 0.6s;
+  }
+  
+  .btn-premium:hover::before {
+    transform: translateX(100%);
+  }
+
+  /* Odds highlight effect */
+  .odds-highlight {
+    @apply relative;
+  }
+  
+  .odds-highlight::after {
+    content: '';
+    @apply absolute inset-0 bg-primary/20 rounded-md opacity-0 transition-opacity duration-300;
+  }
+  
+  .odds-highlight:hover::after {
+    @apply opacity-100;
   }
 }
