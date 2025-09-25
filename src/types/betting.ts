@@ -1,17 +1,24 @@
 // Betting Bulletin Types
-export type BettingType = 'simple' | 'multiple' | 'live-simple' | 'live-multiple';
+export type BettingType =
+  | "simple"
+  | "multiple"
+  | "live-simple"
+  | "live-multiple";
 
-export type BetMarket = 
-  | '1X2'
-  | 'Over/Under 2.5'
-  | 'BTTS'
-  | 'Handicap +1.5'
-  | 'Over/Under 1.5'
-  | 'Double Chance'
-  | 'Both Teams Score'
-  | 'Match Winner'
-  | 'Total Goals'
-  | 'Clean Sheet';
+  export type BetMarket =
+  | "1X2"
+  | "Mais de 2.5"
+  | "Mais de 1.5"
+  | "Mais de 0.5"
+  | "Menos de 2.5"
+  | "Menos de 1.5"
+  | "Menos de 0.5"
+  | "Ambas Marcam"
+  | "Ambas Marcam ou +2.5"
+  | "Hipótese Dupla"
+  | "Vencedor do Jogo"
+  | "Total de Golos"
+  | "Clean Sheet";
 
 export interface League {
   id: number;
@@ -39,7 +46,7 @@ export interface BettingGame {
   odds: number;
   selection: string;
   bookmaker?: string;
-  status?: 'pending' | 'won' | 'lost';
+  status?: "pending" | "won" | "lost";
 }
 
 export interface BettingBulletin {
@@ -50,12 +57,14 @@ export interface BettingBulletin {
   totalOdds: number;
   potentialReturn?: number;
   createdAt: Date;
-  status: 'pending' | 'won' | 'lost' | 'partial';
+  status: "pending" | "won" | "lost" | "partial";
+  bookmakerName?: string;
+  bookmakerLogoUrl?: string;
 }
 
 export interface BullettinTemplate {
   id: string;
   name: string;
   background: string;
-  layout: 'classic' | 'minimal' | 'premium';
+  layout: "classic" | "minimal" | "premium";
 }
