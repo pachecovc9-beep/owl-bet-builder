@@ -81,6 +81,16 @@ const BettingWizard: React.FC<BettingWizardProps> = ({
     );
   };
 
+  // Helper to fix logo paths
+  const safeImg = (url?: string) => {
+    if (!url) return null;
+    if (url.startsWith("/src/assets/")) return url;
+    if (url.startsWith("src/assets/")) return `/${url}`;
+    if (url.startsWith("/assets/")) return url.replace("/assets/", "/src/assets/");
+    if (url.startsWith("http://") || url.startsWith("https://")) return url;
+    return url.startsWith("/") ? url : `/${url}`;
+  };
+
   const TeamCombobox: React.FC<{
     teams: Team[];
     selectedId?: number;
@@ -124,9 +134,12 @@ const BettingWizard: React.FC<BettingWizardProps> = ({
                     <div className="flex items-center gap-2">
                       {team.strTeamBadge && (
                         <img
-                          src={team.strTeamBadge}
+                          src={safeImg(team.strTeamBadge) || team.strTeamBadge}
                           alt={team.name}
-                          className="w-5 h-5 rounded-sm"
+                          className="w-5 h-5 rounded-sm object-contain"
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                          }}
                         />
                       )}
                       <span>{team.name}</span>
