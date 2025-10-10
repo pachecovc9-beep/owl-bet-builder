@@ -6,7 +6,7 @@ export const SUPPORTED_LEAGUES: League[] = [
     name: "Premier League",
     strLeague: "Premier League",
     country: "England",
-    logo: "/assets/logos/Competicoes/Premier League.png",
+    logo: "/src/assets/logos/Competicoes/Premier League.png",
   },
   {
     id: 4335,

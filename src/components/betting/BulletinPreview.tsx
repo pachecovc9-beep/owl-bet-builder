@@ -1,17 +1,10 @@
 import React, { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { BettingBulletin } from "@/types/betting";
-import { Download, Check, X } from "lucide-react";
+import { Download, Check, X, Instagram, Facebook } from "lucide-react";
 import html2canvas from "html2canvas";
 import { toast } from "sonner";
 import owlLogo from "@/assets/owl-logo.png";
-import premiumBg from "@/assets/bulletin-bg-premium.png";
-import classicBg from "@/assets/bulletin-bg-classic.png";
-import {
-  getCachedLocalLogo,
-  getLeagueLogoKey,
-  getTeamLogoKey,
-} from "@/utils/logoCache";
 
 interface BulletinPreviewProps {
   bulletin: BettingBulletin;
@@ -31,17 +24,18 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
       toast.info("A gerar imagem...");
 
       const canvas = await html2canvas(bulletinRef.current, {
+        scale: 1,
         width: 1080,
         height: 1080,
-        scale: 2,
-        backgroundColor: "#1A1A1A",
+        backgroundColor: "#0A0F1E",
         useCORS: true,
         allowTaint: false,
+        logging: false,
       });
 
       const link = document.createElement("a");
       link.download = `boletim-${bulletin.type}-${Date.now()}.png`;
-      link.href = canvas.toDataURL("image/png");
+      link.href = canvas.toDataURL("image/png", 1.0);
       link.click();
 
       toast.success("Imagem descarregada com sucesso!");
@@ -54,9 +48,9 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "won":
-        return <Check className="h-6 w-6 text-green-500" />;
+        return <Check className="h-5 w-5 text-[#00FF88] stroke-[3]" />;
       case "lost":
-        return <X className="h-6 w-6 text-red-500" />;
+        return <X className="h-5 w-5 text-[#FF0055] stroke-[3]" />;
       default:
         return null;
     }
@@ -77,235 +71,234 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
     }
   };
 
-  const safeImg = (url?: string, fallback?: string) => {
-    if (url && (url.startsWith("http://") || url.startsWith("https://")))
-      return url;
-    if (url && url.startsWith("/")) return url; // from public
-    return fallback || "/placeholder.svg";
-  };
-
-  const leagueLogoSrc = (leagueId: number, url?: string) => {
-    // Use the direct URL from our local data
-    return url || "/logos/competicoes/default.png";
-  };
-
-  const teamLogoSrc = (leagueName: string, teamName: string, url?: string) => {
-    // Use the direct URL from our local data
-    return url || "/logos/default_team.png";
-  };
-
-  const getBackground = () => {
-    switch (bulletin.type) {
-      case "simple":
-        return classicBg;
-      case "multiple":
-        return premiumBg;
-      case "live-simple":
-        return classicBg;
-      case "live-multiple":
-        return premiumBg;
-      default:
-        return premiumBg;
+  const safeImg = (url?: string) => {
+    if (!url) return null;
+    // Handle both /assets/ and src/assets/ paths
+    if (url.startsWith("/assets/")) {
+      return url.replace("/assets/", "/src/assets/");
     }
+    if (url.startsWith("http://") || url.startsWith("https://")) {
+      return url;
+    }
+    return url;
   };
 
-  const dense = bulletin.games.length > 6;
+  const hasTeamLogos = (leagueName: string) => {
+    const specialLeagues = [
+      "UEFA Super Cup",
+      "European Championship (Euro)",
+      "Nations League",
+      "FIFA World Cup",
+    ];
+    return !specialLeagues.includes(leagueName);
+  };
 
-  // Names are already shortened as provided by user
   const shortName = (name: string) => name;
+
+  // Calculate dynamic sizing based on number of games
+  const getGameCardSize = () => {
+    const count = bulletin.games.length;
+    if (count === 1) return { padding: "p-6", gap: "gap-4", textSize: "text-base" };
+    if (count <= 3) return { padding: "p-4", gap: "gap-3", textSize: "text-sm" };
+    if (count <= 6) return { padding: "p-3", gap: "gap-2", textSize: "text-xs" };
+    return { padding: "p-2", gap: "gap-1.5", textSize: "text-[10px]" };
+  };
+
+  const sizing = getGameCardSize();
 
   return (
     <div className="space-y-4">
       {/* Preview Container */}
-      <div className="bg-gray-100 p-4 rounded-lg">
+      <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-4 rounded-lg">
         <div
           ref={bulletinRef}
-          className="relative w-full aspect-square max-w-md mx-auto bg-gradient-to-br from-slate-900 to-slate-800 overflow-hidden"
+          className="relative mx-auto overflow-hidden"
           style={{
-            backgroundImage: `url(${getBackground()})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundBlendMode: "overlay",
+            width: "1080px",
+            height: "1080px",
+            background: "linear-gradient(135deg, #0A0F1E 0%, #1A1F3A 100%)",
           }}
         >
-          {/* Header Section (15% - 162px) */}
-          <div className="relative h-[15%] flex items-center justify-center px-6 gradient-primary/10 shadow-premium">
-            <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_top_right,rgba(255,215,0,0.15),transparent_60%)]" />
-            <div className="flex items-center gap-4 relative z-10">
-              <img
-                src={owlLogo}
-                alt="Owl Club"
-                className="w-12 h-12 drop-shadow-[0_0_10px_rgba(255,215,0,0.35)]"
-              />
-              <div className="text-center">
-                <h1 className="text-yellow-400 font-black text-lg md:text-xl tracking-wider drop-shadow-[0_2px_10px_rgba(255,215,0,0.25)]">
+          {/* Animated background elements */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 left-0 w-96 h-96 bg-[#FFD700] rounded-full blur-[120px]" />
+            <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#00BFFF] rounded-full blur-[120px]" />
+          </div>
+
+          {/* Header Section - Modern & Bold */}
+          <div className="relative h-[140px] flex items-center justify-between px-12 border-b-2 border-[#FFD700]/20">
+            <div className="flex items-center gap-6">
+              <div className="relative">
+                <div className="absolute inset-0 bg-[#FFD700] blur-xl opacity-50" />
+                <img
+                  src={owlLogo}
+                  alt="Owl Club"
+                  className="relative w-20 h-20 drop-shadow-2xl"
+                />
+              </div>
+              <div>
+                <h1 className="text-[#FFD700] font-black text-3xl tracking-tight uppercase" style={{ fontFamily: 'Inter, sans-serif', letterSpacing: '0.05em' }}>
                   {getTypeTitle(bulletin.type)}
                 </h1>
                 {bulletin.type.includes("live") && (
-                  <div className="text-red-500 text-xs font-bold animate-pulse">
-                    🔴 AO VIVO
+                  <div className="flex items-center gap-2 mt-1">
+                    <div className="w-3 h-3 bg-[#FF0055] rounded-full animate-pulse" />
+                    <span className="text-[#FF0055] text-sm font-bold uppercase tracking-wider">
+                      AO VIVO
+                    </span>
                   </div>
                 )}
               </div>
             </div>
+            <div className="text-right">
+              <div className="text-white/60 text-xs uppercase tracking-widest">Odd Total</div>
+              <div className="text-[#FFD700] font-black text-4xl">
+                @{bulletin.totalOdds.toFixed(2)}
+              </div>
+            </div>
           </div>
 
-          {/* Games Section (70% - 756px) */}
-          <div className={`h-[70%] p-4 ${dense ? "pt-2" : ""} overflow-hidden`}>
-            <div
-              className={`space-y-${dense ? "2" : "3"} h-full flex flex-col`}
-            >
-              <div className="overflow-y-auto pr-1">
-                {bulletin.games.map((game, index) => (
+          {/* Games Section - Dynamic spacing */}
+          <div className="px-8 py-6" style={{ height: "calc(1080px - 140px - 120px)" }}>
+            <div className="h-full overflow-hidden flex flex-col" style={{ gap: bulletin.games.length > 6 ? "8px" : "12px" }}>
+              {bulletin.games.map((game, index) => {
+                const showLogos = hasTeamLogos(game.league.name);
+                return (
                   <div
                     key={game.id}
-                    className={`bg-white/10 backdrop-blur-sm rounded-xl border border-yellow-400/30 ${
-                      dense ? "p-2" : "p-3"
-                    } shadow-card`}
+                    className="relative overflow-hidden rounded-2xl"
+                    style={{
+                      background: "linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)",
+                      backdropFilter: "blur(10px)",
+                      border: "1px solid rgba(255,215,0,0.2)",
+                      flex: bulletin.games.length === 1 ? "0 0 auto" : "1",
+                      minHeight: bulletin.games.length > 8 ? "60px" : bulletin.games.length > 6 ? "70px" : "80px",
+                      padding: bulletin.games.length > 6 ? "12px 16px" : "16px 20px",
+                    }}
                   >
-                    {/* Competition strip */}
-                    <div
-                      className={`h-${
-                        dense ? "8" : "10"
-                      } rounded-md mb-2 px-3 flex items-center justify-between`}
-                      style={{
-                        background:
-                          "linear-gradient(90deg, rgba(255,215,0,0.15), rgba(255,215,0,0.05))",
-                      }}
-                    >
-                      <div className="flex items-center gap-2 min-w-0">
-                        {game.league && (
+                    {/* Status indicator line */}
+                    {game.status !== "pending" && (
+                      <div
+                        className="absolute left-0 top-0 bottom-0 w-1"
+                        style={{
+                          background: game.status === "won" ? "#00FF88" : "#FF0055",
+                        }}
+                      />
+                    )}
+
+                    {/* League & Odds Row */}
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-3">
+                        {game.league.logo && (
                           <img
-                            src={leagueLogoSrc(
-                              game.league.id,
-                              game.league.logo
-                            )}
-                            alt={`${game.league.name} logo`}
-                            className={`${dense ? "w-5 h-5" : "w-6 h-6"}`}
+                            src={safeImg(game.league.logo)}
+                            alt={game.league.name}
+                            className={bulletin.games.length > 6 ? "w-6 h-6" : "w-8 h-8"}
+                            onError={(e) => {
+                              e.currentTarget.style.display = "none";
+                            }}
                           />
                         )}
-                        <span
-                          className={`text-white ${
-                            dense ? "text-[10px]" : "text-xs"
-                          } font-semibold truncate`}
-                        >
+                        <span className="text-white/80 font-semibold uppercase tracking-wide" style={{ fontSize: bulletin.games.length > 6 ? "11px" : "13px" }}>
                           {game.league.name}
                         </span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`text-yellow-400 ${
-                            dense ? "text-[10px]" : "text-xs"
-                          } font-bold odds-highlight`}
-                        >
-                          @{game.odds}
-                        </span>
+                      <div className="flex items-center gap-3">
+                        <div className="px-4 py-1.5 rounded-full bg-[#FFD700]/10 border border-[#FFD700]/30">
+                          <span className="text-[#FFD700] font-black tracking-wider" style={{ fontSize: bulletin.games.length > 6 ? "14px" : "16px" }}>
+                            @{game.odds}
+                          </span>
+                        </div>
                         {getStatusIcon(game.status || "pending")}
                       </div>
                     </div>
 
-                    <div
-                      className={`flex items-center gap-2 text-white font-semibold ${
-                        dense ? "text-[11px]" : "text-sm"
-                      } mb-1`}
-                    >
-                      <img
-                        src={teamLogoSrc(
-                          game.league.name,
-                          game.homeTeam.name,
-                          game.homeTeam.strTeamBadge
-                        )}
-                        alt={`${game.homeTeam.name} logo`}
-                        className={`${
-                          dense ? "w-5 h-5" : "w-6 h-6"
-                        } rounded-sm`}
-                      />
-                      <span className="truncate">
+                    {/* Teams Row */}
+                    <div className="flex items-center gap-3">
+                      {showLogos && game.homeTeam.strTeamBadge && (
+                        <img
+                          src={safeImg(game.homeTeam.strTeamBadge)}
+                          alt={game.homeTeam.name}
+                          className={bulletin.games.length > 6 ? "w-7 h-7" : "w-9 h-9"}
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                          }}
+                        />
+                      )}
+                      <span className="text-white font-bold truncate" style={{ fontSize: bulletin.games.length > 6 ? "13px" : "15px" }}>
                         {shortName(game.homeTeam.name)}
                       </span>
-                      <span className="text-gray-300">vs</span>
-                      <img
-                        src={teamLogoSrc(
-                          game.league.name,
-                          game.awayTeam.name,
-                          game.awayTeam.strTeamBadge
-                        )}
-                        alt={`${game.awayTeam.name} logo`}
-                        className={`${
-                          dense ? "w-5 h-5" : "w-6 h-6"
-                        } rounded-sm`}
-                      />
-                      <span className="truncate">
+                      <span className="text-white/40 font-medium px-2" style={{ fontSize: bulletin.games.length > 6 ? "12px" : "14px" }}>
+                        vs
+                      </span>
+                      <span className="text-white font-bold truncate" style={{ fontSize: bulletin.games.length > 6 ? "13px" : "15px" }}>
                         {shortName(game.awayTeam.name)}
                       </span>
+                      {showLogos && game.awayTeam.strTeamBadge && (
+                        <img
+                          src={safeImg(game.awayTeam.strTeamBadge)}
+                          alt={game.awayTeam.name}
+                          className={bulletin.games.length > 6 ? "w-7 h-7" : "w-9 h-9"}
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                          }}
+                        />
+                      )}
                     </div>
 
-                    <div
-                      className={`text-gray-300 ${
-                        dense ? "text-[10px]" : "text-xs"
-                      }`}
-                    >
+                    {/* Market Info */}
+                    <div className="mt-2 text-white/60 font-medium" style={{ fontSize: bulletin.games.length > 6 ? "10px" : "11px" }}>
                       {game.market}
-                      {game.market === "Vencedor do Jogo" && game.selection && (
-                        <>
-                          {" • "}
-                          <span className="text-white font-medium">
-                            {game.selection === "home"
-                              ? shortName(game.homeTeam.name)
-                              : shortName(game.awayTeam.name)}
-                          </span>
-                        </>
+                      {game.selection && (
+                        <span className="text-[#00BFFF] ml-2">
+                          • {game.selection === "home" ? shortName(game.homeTeam.name) : shortName(game.awayTeam.name)}
+                        </span>
                       )}
                     </div>
                   </div>
-                ))}
-              </div>
+                );
+              })}
             </div>
           </div>
 
-          {/* Footer Section (15% - 162px) */}
-          <div className="h-[15%] gradient-primary/10 px-4 flex flex-col justify-center shadow-premium">
-            <div className="text-center space-y-1">
-              <div className="flex justify-center items-center gap-4 text-white">
-                <div>
-                  <span className="text-xs text-gray-300">Odd Total:</span>
-                  <span className="text-yellow-400 font-bold ml-2">
-                    @{bulletin.totalOdds.toFixed(2)}
-                  </span>
-                </div>
-                {bulletin.stake && bulletin.potentialReturn && (
-                  <div>
-                    <span className="text-xs text-gray-300">
-                      €{bulletin.stake.toFixed(2)} →
-                    </span>
-                    <span className="text-green-400 font-bold ml-1">
-                      €{bulletin.potentialReturn.toFixed(2)}
-                    </span>
+          {/* Footer Section - Modern & Clean */}
+          <div className="absolute bottom-0 left-0 right-0 h-[120px] px-12 flex items-center justify-between border-t-2 border-[#FFD700]/20">
+            <div className="flex items-center gap-8">
+              {bulletin.stake && bulletin.potentialReturn && (
+                <div className="flex items-center gap-4">
+                  <div className="text-center">
+                    <div className="text-white/60 text-xs uppercase tracking-widest mb-1">Stake</div>
+                    <div className="text-white font-black text-2xl">€{bulletin.stake.toFixed(2)}</div>
                   </div>
-                )}
-              </div>
-
-              {bulletin.bookmakerName && (
-                <div className="flex items-center justify-center gap-2 text-xs text-gray-300">
-                  <span>Odds by</span>
-                  {bulletin.bookmakerLogoUrl && (
-                    <img
-                      src={safeImg(
-                        bulletin.bookmakerLogoUrl,
-                        `/logos/casas/${bulletin.bookmakerName?.toLowerCase()}.png`
-                      )}
-                      alt={bulletin.bookmakerName}
-                      className="w-6 h-6 object-contain"
-                    />
-                  )}
-                  <span className="text-white font-medium">
-                    {bulletin.bookmakerName}
-                  </span>
+                  <div className="text-[#FFD700] text-3xl font-light">→</div>
+                  <div className="text-center">
+                    <div className="text-white/60 text-xs uppercase tracking-widest mb-1">Return</div>
+                    <div className="text-[#00FF88] font-black text-2xl">€{bulletin.potentialReturn.toFixed(2)}</div>
+                  </div>
                 </div>
               )}
-
-              <div className="text-[10px] text-gray-400 tracking-wide uppercase">
-                +18, apostas envolvem risco. t.me/owlclubfree
+              {bulletin.bookmakerName && (
+                <div className="flex items-center gap-3 px-4 py-2 rounded-lg bg-white/5 border border-white/10">
+                  <span className="text-white/60 text-xs">Odds by</span>
+                  {bulletin.bookmakerLogoUrl && (
+                    <img
+                      src={safeImg(bulletin.bookmakerLogoUrl)}
+                      alt={bulletin.bookmakerName}
+                      className="w-8 h-8 object-contain"
+                    />
+                  )}
+                  <span className="text-white font-bold text-sm">{bulletin.bookmakerName}</span>
+                </div>
+              )}
+            </div>
+            <div className="text-right space-y-2">
+              <div className="flex items-center justify-end gap-3">
+                <Instagram className="w-5 h-5 text-[#FFD700]" />
+                <Facebook className="w-5 h-5 text-[#FFD700]" />
+                <span className="text-white font-bold text-base">owlclubpt</span>
+              </div>
+              <div className="text-white/40 text-xs uppercase tracking-wider">
+                +18 • Apostas envolvem risco
               </div>
             </div>
           </div>
