@@ -72,8 +72,8 @@ const BulletinEditor: React.FC<BulletinEditorProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
+      <DialogContent className="max-w-[95vw] h-[95vh] flex flex-col overflow-hidden">
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle className="flex items-center gap-2">
             Editar Boletim - {bulletin.type.replace('-', ' ').toUpperCase()}
             {bulletin.type.includes('live') && (
@@ -82,7 +82,7 @@ const BulletinEditor: React.FC<BulletinEditorProps> = ({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 overflow-y-auto flex-1 pr-2">
           {/* Left Column - Game Status Editor */}
           <div className="space-y-4">
             <div>
@@ -193,7 +193,7 @@ const BulletinEditor: React.FC<BulletinEditorProps> = ({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-2 pt-4 border-t">
+        <div className="flex gap-2 pt-4 border-t flex-shrink-0">
           <Button onClick={onClose} variant="outline" className="flex-1">
             Cancelar
           </Button>

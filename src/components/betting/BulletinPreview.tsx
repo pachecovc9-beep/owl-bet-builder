@@ -24,7 +24,7 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
       toast.info("A gerar imagem...");
 
       const canvas = await html2canvas(bulletinRef.current, {
-        scale: 1,
+        scale: 2,
         width: 1080,
         height: 1080,
         backgroundColor: "#0A0F1E",
@@ -171,7 +171,7 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
   return (
     <div className="space-y-4">
       {/* Preview Container */}
-      <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-4 rounded-lg">
+      <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-4 rounded-lg overflow-hidden">
         <div
           ref={bulletinRef}
           className="relative mx-auto overflow-hidden"
@@ -179,6 +179,8 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
             width: "1080px",
             height: "1080px",
             background: "linear-gradient(135deg, #0A0F1E 0%, #1A1F3A 100%)",
+            transform: "scale(0.95)",
+            transformOrigin: "center",
           }}
         >
           {/* Urban Street Style Background */}
@@ -285,7 +287,7 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                           <img
                             src={safeImg(game.league.logo)}
                             alt={game.league.name}
-                            style={{ width: styles.logoSize, height: styles.logoSize, flexShrink: 0 }}
+                            style={{ width: styles.logoSize, height: styles.logoSize, flexShrink: 0, objectFit: 'contain' }}
                             onError={(e) => {
                               e.currentTarget.style.display = "none";
                             }}
@@ -320,7 +322,7 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                         <img
                           src={safeImg(game.homeTeam.strTeamBadge)}
                           alt={game.homeTeam.name}
-                          style={{ width: styles.teamLogoSize, height: styles.teamLogoSize, flexShrink: 0 }}
+                          style={{ width: styles.teamLogoSize, height: styles.teamLogoSize, flexShrink: 0, objectFit: 'contain' }}
                           onError={(e) => {
                             e.currentTarget.style.display = "none";
                           }}
@@ -356,7 +358,7 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                         <img
                           src={safeImg(game.awayTeam.strTeamBadge)}
                           alt={game.awayTeam.name}
-                          style={{ width: styles.teamLogoSize, height: styles.teamLogoSize, flexShrink: 0 }}
+                          style={{ width: styles.teamLogoSize, height: styles.teamLogoSize, flexShrink: 0, objectFit: 'contain' }}
                           onError={(e) => {
                             e.currentTarget.style.display = "none";
                           }}
@@ -424,7 +426,8 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                     <img
                       src={safeImg(bulletin.bookmakerLogoUrl)}
                       alt={bulletin.bookmakerName}
-                      className="w-8 h-8 object-contain"
+                      className="object-contain"
+                      style={{ width: '32px', height: '32px' }}
                     />
                   )}
                   <span className="text-white font-bold text-sm">{bulletin.bookmakerName}</span>
