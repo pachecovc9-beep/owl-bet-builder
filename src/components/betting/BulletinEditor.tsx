@@ -72,7 +72,7 @@ const BulletinEditor: React.FC<BulletinEditorProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl h-[95vh] flex flex-col overflow-hidden">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             Editar Boletim - {bulletin.type.replace('-', ' ').toUpperCase()}
@@ -82,9 +82,9 @@ const BulletinEditor: React.FC<BulletinEditorProps> = ({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1 overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left Column - Game Status Editor */}
-          <div className="space-y-4 overflow-y-auto pr-2">
+          <div className="space-y-4">
             <div>
               <h3 className="text-lg font-semibold mb-4">Status dos Jogos</h3>
               <div className="space-y-3">
@@ -181,15 +181,13 @@ const BulletinEditor: React.FC<BulletinEditorProps> = ({
           </div>
 
           {/* Right Column - Preview */}
-          <div className="space-y-4 overflow-y-auto pr-2">
+          <div className="space-y-4">
             <div>
               <h3 className="text-lg font-semibold mb-4">Preview do Boletim</h3>
-              <div className="scale-50 origin-top">
-                <BulletinPreview 
-                  bulletin={updatedBulletin}
-                  showDownloadButton={true}
-                />
-              </div>
+              <BulletinPreview 
+                bulletin={updatedBulletin}
+                showDownloadButton={true}
+              />
             </div>
           </div>
         </div>
