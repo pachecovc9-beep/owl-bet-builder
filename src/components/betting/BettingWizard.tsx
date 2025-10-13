@@ -86,7 +86,8 @@ const BettingWizard: React.FC<BettingWizardProps> = ({
     if (!url) return null;
     if (url.startsWith("/src/assets/")) return url;
     if (url.startsWith("src/assets/")) return `/${url}`;
-    if (url.startsWith("/assets/")) return url.replace("/assets/", "/src/assets/");
+    if (url.startsWith("/assets/"))
+      return url.replace("/assets/", "/src/assets/");
     if (url.startsWith("http://") || url.startsWith("https://")) return url;
     return url.startsWith("/") ? url : `/${url}`;
   };
@@ -318,7 +319,7 @@ const BettingWizard: React.FC<BettingWizardProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[95vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             {bettingType.includes("live") && (
@@ -386,7 +387,7 @@ const BettingWizard: React.FC<BettingWizardProps> = ({
               </span>
             </div>
 
-            <div className="space-y-4 max-h-96 overflow-y-auto">
+            <div className="space-y-4 max-h-[70vh] overflow-y-auto">
               {games.map((game, index) => (
                 <div
                   key={game.id}

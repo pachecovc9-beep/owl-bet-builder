@@ -3,55 +3,69 @@
 @tailwind utilities;
 
 /* Betting Bulletin Generator Design System - Premium Sports Betting UI */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800;900&display=swap");
 
 @layer base {
   :root {
-    /* Base colors - Dark theme with golden accents */
-    --background: 220 13% 9%; /* #1A1A1A equivalent */
-    --foreground: 48 100% 95%; /* Light text */
+    /* Neo-Football Urban Colors */
+    --background: 240 100% 4%; /* #0B0B10 */
+    --foreground: 0 0% 100%; /* #FFFFFF */
 
-    --card: 220 13% 12%; /* Slightly lighter than background */
-    --card-foreground: 48 100% 95%;
+    --card: 240 100% 6%; /* Slightly lighter than background */
+    --card-foreground: 0 0% 100%;
 
-    --popover: 220 13% 10%;
-    --popover-foreground: 48 100% 95%;
+    --popover: 240 100% 5%;
+    --popover-foreground: 0 0% 100%;
 
-    /* Golden primary theme */
-    --primary: 45 100% 50%; /* #FFD700 equivalent */
-    --primary-foreground: 220 13% 9%;
+    /* Urban neon theme */
+    --primary: 51 100% 50%; /* #FFD300 */
+    --primary-foreground: 240 100% 4%;
 
-    --secondary: 220 13% 15%;
-    --secondary-foreground: 48 100% 90%;
+    --secondary: 240 100% 8%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 220 13% 16%;
-    --muted-foreground: 220 9% 65%;
+    --muted: 240 100% 10%;
+    --muted-foreground: 0 0% 70%;
 
-    --accent: 45 100% 50%;
-    --accent-foreground: 220 13% 9%;
+    --accent: 300 100% 50%; /* #8F00FF */
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 48 100% 95%;
+    --destructive: 0 100% 30%; /* #FF004D */
+    --destructive-foreground: 0 0% 100%;
 
-    --success: 142 76% 36%;
-    --success-foreground: 48 100% 95%;
+    --success: 142 100% 50%; /* #00FF85 */
+    --success-foreground: 240 100% 4%;
 
-    --border: 220 13% 20%;
-    --input: 220 13% 15%;
-    --ring: 45 100% 50%;
+    --border: 240 100% 20%;
+    --input: 240 100% 8%;
+    --ring: 51 100% 50%;
 
     --radius: 0.75rem;
 
-    /* Premium gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(45 100% 50%), hsl(38 100% 45%));
-    --gradient-dark: linear-gradient(135deg, hsl(220 13% 9%), hsl(220 13% 12%));
-    --gradient-card: linear-gradient(135deg, hsl(220 13% 12%), hsl(220 13% 15%));
-    --gradient-betting: linear-gradient(135deg, hsl(45 100% 15%), hsl(45 100% 8%));
+    /* Urban Neo-Football gradients */
+    --gradient-primary: linear-gradient(135deg, #ffd300, #ff8c00);
+    --gradient-dark: linear-gradient(135deg, #0b0b10, #0a1633);
+    --gradient-card: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.08),
+      rgba(255, 255, 255, 0.02)
+    );
+    --gradient-betting: linear-gradient(
+      135deg,
+      rgba(255, 211, 0, 0.15),
+      rgba(143, 0, 255, 0.1)
+    );
+    --gradient-neon: linear-gradient(135deg, #8f00ff, #00e0ff);
 
-    /* Premium shadows */
-    --shadow-glow: 0 0 40px hsl(45 100% 50% / 0.15);
-    --shadow-card: 0 10px 30px hsl(220 13% 3% / 0.3);
-    --shadow-premium: 0 20px 60px hsl(220 13% 3% / 0.4);
+    /* Urban neon shadows */
+    --shadow-glow: 0 0 40px rgba(255, 211, 0, 0.3);
+    --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.5);
+    --shadow-premium: 0 20px 60px rgba(0, 0, 0, 0.6);
+    --shadow-neon: 0 0 20px rgba(143, 0, 255, 0.4);
+    --shadow-cyan: 0 0 20px rgba(0, 224, 255, 0.4);
 
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -128,35 +142,47 @@
   .gradient-primary {
     background: var(--gradient-primary);
   }
-  
+
   .gradient-dark {
     background: var(--gradient-dark);
   }
-  
+
   .gradient-card {
     background: var(--gradient-card);
   }
-  
+
   .gradient-betting {
     background: var(--gradient-betting);
   }
-  
+
+  .gradient-neon {
+    background: var(--gradient-neon);
+  }
+
   .shadow-glow {
     box-shadow: var(--shadow-glow);
   }
-  
+
   .shadow-card {
     box-shadow: var(--shadow-card);
   }
-  
+
   .shadow-premium {
     box-shadow: var(--shadow-premium);
   }
-  
+
+  .shadow-neon {
+    box-shadow: var(--shadow-neon);
+  }
+
+  .shadow-cyan {
+    box-shadow: var(--shadow-cyan);
+  }
+
   .transition-smooth {
     transition: var(--transition-smooth);
   }
-  
+
   .transition-bounce {
     transition: var(--transition-bounce);
   }
@@ -170,14 +196,14 @@
   .btn-premium {
     @apply relative overflow-hidden transition-all duration-300;
   }
-  
+
   .btn-premium::before {
-    content: '';
+    content: "";
     @apply absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent;
     transform: translateX(-100%);
     transition: transform 0.6s;
   }
-  
+
   .btn-premium:hover::before {
     transform: translateX(100%);
   }
@@ -186,13 +212,53 @@
   .odds-highlight {
     @apply relative;
   }
-  
+
   .odds-highlight::after {
-    content: '';
+    content: "";
     @apply absolute inset-0 bg-primary/20 rounded-md opacity-0 transition-opacity duration-300;
   }
-  
+
   .odds-highlight:hover::after {
     @apply opacity-100;
+  }
+
+  /* Urban Neo-Football Styles */
+  .urban-title {
+    font-family: "Bebas Neue", sans-serif;
+    text-shadow: 4px 4px 0px #ffd300, 8px 8px 0px rgba(143, 0, 255, 0.3);
+    -webkit-text-stroke: 2px #000;
+  }
+
+  .urban-subtitle {
+    font-family: "Exo 2", sans-serif;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  }
+
+  .urban-odds {
+    font-family: "Orbitron", monospace;
+    text-shadow: 0 0 15px rgba(255, 211, 0, 0.6);
+  }
+
+  .urban-glow {
+    box-shadow: 0 0 20px rgba(255, 211, 0, 0.4);
+  }
+
+  .urban-neon-glow {
+    box-shadow: 0 0 20px rgba(143, 0, 255, 0.4);
+  }
+
+  .urban-cyan-glow {
+    box-shadow: 0 0 20px rgba(0, 224, 255, 0.4);
+  }
+
+  .urban-panel {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(255, 255, 255, 0.02) 100%
+    );
+    border: 2px solid #ffd300;
+    border-left: 6px solid #ffd300;
+    clip-path: polygon(0 0, 100% 0, 98% 100%, 0% 100%);
   }
 }
