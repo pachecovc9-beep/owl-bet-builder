@@ -114,69 +114,72 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
   };
 
   const shortName = (name: string, maxLength: number = 20) => {
-    return name.length > maxLength
-      ? `${name.substring(0, maxLength)}...`
-      : name;
+    if (name.length <= maxLength) return name;
+    
+    // For very short limits, just truncate
+    if (maxLength <= 8) {
+      return `${name.substring(0, maxLength - 1)}...`;
+    }
+    
+    // Smart truncation: try to keep whole words
+    const truncated = name.substring(0, maxLength);
+    const lastSpace = truncated.lastIndexOf(' ');
+    
+    if (lastSpace > maxLength * 0.6) {
+      return `${truncated.substring(0, lastSpace)}...`;
+    }
+    
+    return `${truncated}...`;
   };
 
   // Calculate dynamic sizing based on number of games
   const getDynamicStyles = () => {
     const count = bulletin.games.length;
     const availableHeight = 780; // 1080 - 160 (header) - 140 (footer)
-
-    // Calculate optimal height per game based on total games
-    let gameHeight,
-      leagueFontSize,
-      teamFontSize,
-      oddFontSize,
-      marketFontSize,
-      logoSize,
-      teamLogoSize,
-      padding,
-      gap;
-
-    if (count === 1) {
-      gameHeight = 140;
+    
+    // Calculate total gap space between games
+    const totalGapSpace = count > 1 ? (count - 1) * 8 : 0; // 8px gap between games
+    
+    // Calculate available height per game (after accounting for gaps)
+    const heightPerGame = (availableHeight - totalGapSpace) / count;
+    
+    // Calculate optimal sizes based on height per game
+    let leagueFontSize, teamFontSize, oddFontSize, marketFontSize;
+    let logoSize, teamLogoSize, padding;
+    
+    if (heightPerGame >= 140) {
       leagueFontSize = 18;
       teamFontSize = 20;
       oddFontSize = 22;
       marketFontSize = 15;
       logoSize = 52;
       teamLogoSize = 48;
-      padding = 28;
-      gap = 20;
-    } else if (count <= 3) {
-      gameHeight = 120;
+      padding = 20;
+    } else if (heightPerGame >= 120) {
       leagueFontSize = 16;
       teamFontSize = 18;
       oddFontSize = 20;
       marketFontSize = 13;
       logoSize = 44;
       teamLogoSize = 40;
-      padding = 20;
-      gap = 14;
-    } else if (count <= 5) {
-      gameHeight = 100;
+      padding = 16;
+    } else if (heightPerGame >= 100) {
       leagueFontSize = 14;
       teamFontSize = 16;
       oddFontSize = 18;
       marketFontSize = 12;
       logoSize = 36;
       teamLogoSize = 32;
-      padding = 16;
-      gap = 10;
-    } else if (count <= 7) {
-      gameHeight = 80;
+      padding = 14;
+    } else if (heightPerGame >= 80) {
       leagueFontSize = 12;
       teamFontSize = 14;
       oddFontSize = 16;
-      marketFontSize = 10;
+      marketFontSize = 11;
       logoSize = 28;
       teamLogoSize = 24;
       padding = 12;
-      gap = 8;
-    } else if (count <= 9) {
-      gameHeight = 65;
+    } else if (heightPerGame >= 65) {
       leagueFontSize = 10;
       teamFontSize = 12;
       oddFontSize = 14;
@@ -184,23 +187,19 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
       logoSize = 24;
       teamLogoSize = 20;
       padding = 10;
-      gap = 6;
     } else {
-      // 10+ games - ultra compact
-      gameHeight = 55;
+      // Ultra compact for 10+ games
       leagueFontSize = 9;
       teamFontSize = 11;
-      oddFontSize = 12;
+      oddFontSize = 13;
       marketFontSize = 8;
       logoSize = 20;
-      teamLogoSize = 16;
+      teamLogoSize = 18;
       padding = 8;
-      gap = 4;
     }
 
     return {
-      gameHeight: "auto",
-      minHeight: `${gameHeight}px`,
+      gameHeight: `${heightPerGame}px`,
       leagueFontSize: `${leagueFontSize}px`,
       teamFontSize: `${teamFontSize}px`,
       oddFontSize: `${oddFontSize}px`,
@@ -208,7 +207,7 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
       logoSize: `${logoSize}px`,
       teamLogoSize: `${teamLogoSize}px`,
       padding: `${padding}px`,
-      gap: `${gap}px`,
+      gap: "8px",
     };
   };
 
@@ -307,10 +306,10 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
           {/* Games Section - Dynamic & Compact */}
           <div
             className="px-4 py-3 overflow-hidden"
-            style={{ height: "calc(1080px - 160px - 140px)" }}
+            style={{ height: "780px" }}
           >
             <div
-              className="h-full overflow-y-auto pr-1"
+              className="h-full flex flex-col"
               style={{ gap: styles.gap }}
             >
               {bulletin.games.map((game, index) => {
@@ -318,19 +317,18 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                 return (
                   <div
                     key={game.id}
-                    className="relative overflow-hidden"
+                    className="relative overflow-hidden flex-shrink-0"
                     style={{
                       background:
                         "linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(26,26,42,0.8) 100%)",
                       border: "2px solid #FFD300",
                       borderLeft: "6px solid #FFD300",
-                      minHeight: styles.minHeight,
+                      height: styles.gameHeight,
                       padding: styles.padding,
                       display: "flex",
                       flexDirection: "column",
                       justifyContent: "center",
                       clipPath: "polygon(0 0, 100% 0, 98% 100%, 0% 100%)",
-                      marginBottom: "1px",
                     }}
                   >
                     {/* Status indicator */}
@@ -433,7 +431,7 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                       >
                         {shortName(
                           game.homeTeam.name,
-                          bulletin.games.length > 6 ? 12 : 18
+                          bulletin.games.length > 7 ? 10 : bulletin.games.length > 5 ? 14 : 18
                         )}
                       </span>
                       <span
@@ -453,7 +451,7 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                       >
                         {shortName(
                           game.awayTeam.name,
-                          bulletin.games.length > 6 ? 12 : 18
+                          bulletin.games.length > 7 ? 10 : bulletin.games.length > 5 ? 14 : 18
                         )}
                       </span>
                       {showLogos && game.awayTeam.strTeamBadge && (
