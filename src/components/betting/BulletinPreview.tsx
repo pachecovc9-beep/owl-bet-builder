@@ -135,67 +135,99 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
   // Calculate dynamic sizing based on number of games
   const getDynamicStyles = () => {
     const count = bulletin.games.length;
-    const availableHeight = 780; // 1080 - 160 (header) - 140 (footer)
+    const headerHeight = 160;
+    const footerHeight = 140;
+    const availableHeight = 1080 - headerHeight - footerHeight; // 780px
     
-    // Calculate total gap space between games
-    const totalGapSpace = count > 1 ? (count - 1) * 8 : 0; // 8px gap between games
+    // Dynamic gap calculation based on number of games
+    let gapSize: number;
+    if (count <= 2) {
+      gapSize = 16;
+    } else if (count <= 4) {
+      gapSize = 12;
+    } else if (count <= 6) {
+      gapSize = 8;
+    } else {
+      gapSize = 4;
+    }
     
-    // Calculate available height per game (after accounting for gaps)
+    const totalGapSpace = count > 1 ? (count - 1) * gapSize : 0;
     const heightPerGame = (availableHeight - totalGapSpace) / count;
     
-    // Calculate optimal sizes based on height per game
+    // Calculate all sizes proportionally based on heightPerGame
     let leagueFontSize, teamFontSize, oddFontSize, marketFontSize;
-    let logoSize, teamLogoSize, padding;
+    let logoSize, teamLogoSize, padding, teamNameMaxLength;
     
-    if (heightPerGame >= 140) {
+    if (heightPerGame >= 150) {
+      // 1-2 games: Maximum size
+      leagueFontSize = 20;
+      teamFontSize = 24;
+      oddFontSize = 26;
+      marketFontSize = 16;
+      logoSize = 56;
+      teamLogoSize = 52;
+      padding = 24;
+      teamNameMaxLength = 25;
+    } else if (heightPerGame >= 130) {
+      // 2-3 games
       leagueFontSize = 18;
-      teamFontSize = 20;
-      oddFontSize = 22;
+      teamFontSize = 22;
+      oddFontSize = 24;
       marketFontSize = 15;
-      logoSize = 52;
-      teamLogoSize = 48;
+      logoSize = 50;
+      teamLogoSize = 46;
       padding = 20;
-    } else if (heightPerGame >= 120) {
+      teamNameMaxLength = 20;
+    } else if (heightPerGame >= 110) {
+      // 3-4 games
       leagueFontSize = 16;
-      teamFontSize = 18;
-      oddFontSize = 20;
-      marketFontSize = 13;
+      teamFontSize = 19;
+      oddFontSize = 21;
+      marketFontSize = 14;
       logoSize = 44;
       teamLogoSize = 40;
-      padding = 16;
-    } else if (heightPerGame >= 100) {
+      padding = 18;
+      teamNameMaxLength = 18;
+    } else if (heightPerGame >= 90) {
+      // 4-5 games
       leagueFontSize = 14;
-      teamFontSize = 16;
-      oddFontSize = 18;
+      teamFontSize = 17;
+      oddFontSize = 19;
       marketFontSize = 12;
-      logoSize = 36;
-      teamLogoSize = 32;
-      padding = 14;
-    } else if (heightPerGame >= 80) {
+      logoSize = 38;
+      teamLogoSize = 34;
+      padding = 16;
+      teamNameMaxLength = 16;
+    } else if (heightPerGame >= 75) {
+      // 5-7 games
       leagueFontSize = 12;
-      teamFontSize = 14;
-      oddFontSize = 16;
+      teamFontSize = 15;
+      oddFontSize = 17;
       marketFontSize = 11;
-      logoSize = 28;
+      logoSize = 32;
+      teamLogoSize = 28;
+      padding = 14;
+      teamNameMaxLength = 14;
+    } else if (heightPerGame >= 65) {
+      // 7-9 games
+      leagueFontSize = 11;
+      teamFontSize = 13;
+      oddFontSize = 15;
+      marketFontSize = 10;
+      logoSize = 26;
       teamLogoSize = 24;
       padding = 12;
-    } else if (heightPerGame >= 65) {
+      teamNameMaxLength = 12;
+    } else {
+      // 10+ games: Ultra compact
       leagueFontSize = 10;
       teamFontSize = 12;
       oddFontSize = 14;
       marketFontSize = 9;
-      logoSize = 24;
+      logoSize = 22;
       teamLogoSize = 20;
       padding = 10;
-    } else {
-      // Ultra compact for 10+ games
-      leagueFontSize = 9;
-      teamFontSize = 11;
-      oddFontSize = 13;
-      marketFontSize = 8;
-      logoSize = 20;
-      teamLogoSize = 18;
-      padding = 8;
+      teamNameMaxLength = 10;
     }
 
     return {
@@ -207,7 +239,8 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
       logoSize: `${logoSize}px`,
       teamLogoSize: `${teamLogoSize}px`,
       padding: `${padding}px`,
-      gap: "8px",
+      gap: `${gapSize}px`,
+      teamNameMaxLength,
     };
   };
 
@@ -429,10 +462,7 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                           lineHeight: "1.1",
                         }}
                       >
-                        {shortName(
-                          game.homeTeam.name,
-                          bulletin.games.length > 7 ? 10 : bulletin.games.length > 5 ? 14 : 18
-                        )}
+                        {shortName(game.homeTeam.name, styles.teamNameMaxLength)}
                       </span>
                       <span
                         className="text-[#8F00FF] font-black px-2 flex-shrink-0"
@@ -449,10 +479,7 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                           lineHeight: "1.1",
                         }}
                       >
-                        {shortName(
-                          game.awayTeam.name,
-                          bulletin.games.length > 7 ? 10 : bulletin.games.length > 5 ? 14 : 18
-                        )}
+                        {shortName(game.awayTeam.name, styles.teamNameMaxLength)}
                       </span>
                       {showLogos && game.awayTeam.strTeamBadge && (
                         <img
@@ -480,13 +507,13 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                         lineHeight: "1.1",
                       }}
                     >
-                      {game.market}
+                      {shortName(game.market, Math.min(styles.teamNameMaxLength * 2, 40))}
                       {game.selection && (
                         <span className="text-[#00E0FF] ml-1">
                           •{" "}
                           {game.selection === "home"
-                            ? shortName(game.homeTeam.name, 10)
-                            : shortName(game.awayTeam.name, 10)}
+                            ? shortName(game.homeTeam.name, Math.floor(styles.teamNameMaxLength * 0.6))
+                            : shortName(game.awayTeam.name, Math.floor(styles.teamNameMaxLength * 0.6))}
                         </span>
                       )}
                     </div>
