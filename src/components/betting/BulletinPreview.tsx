@@ -139,47 +139,41 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
     const footerHeight = 140;
     const availableHeight = 1080 - headerHeight - footerHeight; // 780px
     
-    // Dynamic gap calculation based on number of games
-    let gapSize: number;
-    if (count <= 2) {
-      gapSize = 16;
-    } else if (count <= 4) {
-      gapSize = 12;
-    } else if (count <= 6) {
-      gapSize = 8;
-    } else {
-      gapSize = 4;
-    }
-    
-    const totalGapSpace = count > 1 ? (count - 1) * gapSize : 0;
-    const heightPerGame = (availableHeight - totalGapSpace) / count;
-    
-    // Calculate all sizes proportionally based on heightPerGame
+    // Calculate all sizes based directly on game count for more aggressive scaling
     let leagueFontSize, teamFontSize, oddFontSize, marketFontSize;
-    let logoSize, teamLogoSize, padding, teamNameMaxLength;
+    let logoSize, teamLogoSize, padding, teamNameMaxLength, gapSize;
     
-    if (heightPerGame >= 150) {
-      // 1-2 games: Maximum size
+    if (count === 1) {
+      leagueFontSize = 24;
+      teamFontSize = 32;
+      oddFontSize = 34;
+      marketFontSize = 20;
+      logoSize = 70;
+      teamLogoSize = 65;
+      padding = 32;
+      teamNameMaxLength = 30;
+      gapSize = 20;
+    } else if (count === 2) {
       leagueFontSize = 20;
-      teamFontSize = 24;
-      oddFontSize = 26;
-      marketFontSize = 16;
-      logoSize = 56;
-      teamLogoSize = 52;
-      padding = 24;
+      teamFontSize = 26;
+      oddFontSize = 28;
+      marketFontSize = 17;
+      logoSize = 58;
+      teamLogoSize = 54;
+      padding = 26;
       teamNameMaxLength = 25;
-    } else if (heightPerGame >= 130) {
-      // 2-3 games
+      gapSize = 18;
+    } else if (count === 3) {
       leagueFontSize = 18;
       teamFontSize = 22;
       oddFontSize = 24;
       marketFontSize = 15;
       logoSize = 50;
       teamLogoSize = 46;
-      padding = 20;
+      padding = 22;
       teamNameMaxLength = 20;
-    } else if (heightPerGame >= 110) {
-      // 3-4 games
+      gapSize = 14;
+    } else if (count === 4) {
       leagueFontSize = 16;
       teamFontSize = 19;
       oddFontSize = 21;
@@ -188,8 +182,8 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
       teamLogoSize = 40;
       padding = 18;
       teamNameMaxLength = 18;
-    } else if (heightPerGame >= 90) {
-      // 4-5 games
+      gapSize = 12;
+    } else if (count === 5) {
       leagueFontSize = 14;
       teamFontSize = 17;
       oddFontSize = 19;
@@ -198,37 +192,62 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
       teamLogoSize = 34;
       padding = 16;
       teamNameMaxLength = 16;
-    } else if (heightPerGame >= 75) {
-      // 5-7 games
-      leagueFontSize = 12;
+      gapSize = 10;
+    } else if (count === 6) {
+      leagueFontSize = 13;
       teamFontSize = 15;
       oddFontSize = 17;
       marketFontSize = 11;
-      logoSize = 32;
-      teamLogoSize = 28;
+      logoSize = 34;
+      teamLogoSize = 30;
       padding = 14;
       teamNameMaxLength = 14;
-    } else if (heightPerGame >= 65) {
-      // 7-9 games
+      gapSize = 8;
+    } else if (count === 7) {
+      leagueFontSize = 12;
+      teamFontSize = 14;
+      oddFontSize = 16;
+      marketFontSize = 10;
+      logoSize = 30;
+      teamLogoSize = 26;
+      padding = 12;
+      teamNameMaxLength = 13;
+      gapSize = 7;
+    } else if (count === 8) {
       leagueFontSize = 11;
       teamFontSize = 13;
       oddFontSize = 15;
-      marketFontSize = 10;
+      marketFontSize = 9;
       logoSize = 26;
       teamLogoSize = 24;
-      padding = 12;
+      padding = 11;
       teamNameMaxLength = 12;
-    } else {
-      // 10+ games: Ultra compact
+      gapSize = 6;
+    } else if (count === 9) {
       leagueFontSize = 10;
       teamFontSize = 12;
       oddFontSize = 14;
       marketFontSize = 9;
+      logoSize = 24;
+      teamLogoSize = 22;
+      padding = 10;
+      teamNameMaxLength = 11;
+      gapSize = 5;
+    } else {
+      // 10+ games: Ultra compact
+      leagueFontSize = 9;
+      teamFontSize = 11;
+      oddFontSize = 13;
+      marketFontSize = 8;
       logoSize = 22;
       teamLogoSize = 20;
-      padding = 10;
+      padding = 9;
       teamNameMaxLength = 10;
+      gapSize = 4;
     }
+    
+    const totalGapSpace = count > 1 ? (count - 1) * gapSize : 0;
+    const heightPerGame = (availableHeight - totalGapSpace) / count;
 
     return {
       gameHeight: `${heightPerGame}px`,
