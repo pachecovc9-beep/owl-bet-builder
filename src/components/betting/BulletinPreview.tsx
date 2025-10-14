@@ -119,8 +119,8 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
   const getDynamicStyles = () => {
     const count = bulletin.games.length;
     const headerHeight = 160;
-    const footerHeight = 100;
-    const availableHeight = 1080 - headerHeight - footerHeight; // 820px
+    const footerHeight = 80;
+    const availableHeight = 1080 - headerHeight - footerHeight; // 840px
 
     // Calculate all sizes based directly on game count for more aggressive scaling
     let leagueFontSize, teamFontSize, oddFontSize, marketFontSize;
@@ -133,9 +133,9 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
       marketFontSize = 20;
       logoSize = 70;
       teamLogoSize = 65;
-      padding = 32;
+      padding = 28;
       teamNameMaxLength = 30;
-      gapSize = 20;
+      gapSize = 18;
     } else if (count === 2) {
       leagueFontSize = 20;
       teamFontSize = 26;
@@ -143,9 +143,9 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
       marketFontSize = 17;
       logoSize = 58;
       teamLogoSize = 54;
-      padding = 26;
+      padding = 24;
       teamNameMaxLength = 25;
-      gapSize = 18;
+      gapSize = 16;
     } else if (count === 3) {
       leagueFontSize = 18;
       teamFontSize = 22;
@@ -153,9 +153,9 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
       marketFontSize = 15;
       logoSize = 50;
       teamLogoSize = 46;
-      padding = 22;
+      padding = 20;
       teamNameMaxLength = 20;
-      gapSize = 14;
+      gapSize = 12;
     } else if (count === 4) {
       leagueFontSize = 16;
       teamFontSize = 19;
@@ -163,9 +163,9 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
       marketFontSize = 14;
       logoSize = 44;
       teamLogoSize = 40;
-      padding = 18;
+      padding = 16;
       teamNameMaxLength = 18;
-      gapSize = 12;
+      gapSize = 10;
     } else if (count === 5) {
       leagueFontSize = 14;
       teamFontSize = 17;
@@ -173,9 +173,9 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
       marketFontSize = 12;
       logoSize = 38;
       teamLogoSize = 34;
-      padding = 16;
+      padding = 14;
       teamNameMaxLength = 16;
-      gapSize = 10;
+      gapSize = 8;
     } else if (count === 6) {
       leagueFontSize = 13;
       teamFontSize = 15;
@@ -183,9 +183,9 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
       marketFontSize = 11;
       logoSize = 34;
       teamLogoSize = 30;
-      padding = 14;
+      padding = 12;
       teamNameMaxLength = 14;
-      gapSize = 8;
+      gapSize = 7;
     } else if (count === 7) {
       leagueFontSize = 12;
       teamFontSize = 14;
@@ -193,9 +193,9 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
       marketFontSize = 10;
       logoSize = 30;
       teamLogoSize = 26;
-      padding = 12;
+      padding = 10;
       teamNameMaxLength = 13;
-      gapSize = 7;
+      gapSize = 6;
     } else if (count === 8) {
       leagueFontSize = 11;
       teamFontSize = 13;
@@ -203,9 +203,9 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
       marketFontSize = 9;
       logoSize = 26;
       teamLogoSize = 24;
-      padding = 11;
+      padding = 9;
       teamNameMaxLength = 12;
-      gapSize = 6;
+      gapSize = 5;
     } else if (count === 9) {
       leagueFontSize = 10;
       teamFontSize = 12;
@@ -213,9 +213,9 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
       marketFontSize = 9;
       logoSize = 24;
       teamLogoSize = 22;
-      padding = 10;
+      padding = 8;
       teamNameMaxLength = 11;
-      gapSize = 5;
+      gapSize = 4;
     } else {
       // 10+ games: Ultra compact
       leagueFontSize = 9;
@@ -224,9 +224,9 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
       marketFontSize = 8;
       logoSize = 22;
       teamLogoSize = 20;
-      padding = 9;
+      padding = 7;
       teamNameMaxLength = 10;
-      gapSize = 4;
+      gapSize = 3;
     }
 
     const totalGapSpace = count > 1 ? (count - 1) * gapSize : 0;
@@ -341,7 +341,7 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
           {/* Games Section - Dynamic & Compact */}
           <div
             className="px-4 py-3 overflow-hidden"
-            style={{ height: "820px" }}
+            style={{ height: "840px" }}
           >
             <div className="h-full flex flex-col" style={{ gap: styles.gap }}>
               {bulletin.games.map((game, index) => {
@@ -510,41 +510,41 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
           </div>
 
           {/* Footer Section - Urban Bold */}
-          <div className="absolute bottom-0 left-0 right-0 h-[100px] px-10 flex items-center justify-between border-t-4 border-[#FFD300] bg-black/30">
-            <div className="flex items-center gap-6">
+          <div className="absolute bottom-0 left-0 right-0 h-[80px] px-8 flex items-center justify-between border-t-3 border-[#FFD300] bg-black/30">
+            <div className="flex items-center gap-4">
               {bulletin.stake &&
                 bulletin.stake > 0 &&
                 bulletin.potentialReturn && (
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
                   <div
-                    className="text-center px-3 py-1 bg-black/60 border-2 border-white/20"
+                    className="text-center px-2 py-0.5 bg-black/60 border border-white/20"
                     style={{
                       clipPath: "polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%)",
                     }}
                   >
-                    <div className="text-[#00E0FF] text-[10px] uppercase tracking-wide font-bold">
+                    <div className="text-[#00E0FF] text-[8px] uppercase tracking-wide font-bold">
                       Stake
                     </div>
                     <div
-                      className="text-white font-black text-lg"
-                      style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.8)" }}
+                      className="text-white font-black text-sm"
+                      style={{ textShadow: "1px 1px 2px rgba(0,0,0,0.8)" }}
                     >
                       €{bulletin.stake.toFixed(2)}
                     </div>
                   </div>
-                  <div className="text-[#FFD300] text-2xl font-black">→</div>
+                  <div className="text-[#FFD300] text-xl font-black">→</div>
                   <div
-                    className="text-center px-3 py-1 bg-black/60 border-2 border-[#00FF85]"
+                    className="text-center px-2 py-0.5 bg-black/60 border border-[#00FF85]"
                     style={{
                       clipPath: "polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%)",
                     }}
                   >
-                    <div className="text-[#00E0FF] text-[10px] uppercase tracking-wide font-bold">
+                    <div className="text-[#00E0FF] text-[8px] uppercase tracking-wide font-bold">
                       Return
                     </div>
                     <div
-                      className="text-[#00FF85] font-black text-lg"
-                      style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.8)" }}
+                      className="text-[#00FF85] font-black text-sm"
+                      style={{ textShadow: "1px 1px 2px rgba(0,0,0,0.8)" }}
                     >
                       €{bulletin.potentialReturn.toFixed(2)}
                     </div>
@@ -553,12 +553,12 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                 )}
               {bulletin.bookmakerName && (
                 <div
-                  className="flex items-center gap-2 px-3 py-1 bg-black/60 border-2 border-[#FFD300]/30"
+                  className="flex items-center gap-1.5 px-2 py-0.5 bg-black/60 border border-[#FFD300]/30"
                   style={{
                     clipPath: "polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%)",
                   }}
                 >
-                  <span className="text-white/60 text-[10px] font-bold uppercase">
+                  <span className="text-white/60 text-[8px] font-bold uppercase">
                     Odds by
                   </span>
                   {bulletin.bookmakerLogoUrl && (
@@ -566,38 +566,38 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                       src={safeImg(bulletin.bookmakerLogoUrl)}
                       alt={bulletin.bookmakerName}
                       className="object-contain"
-                      style={{ width: "24px", height: "24px" }}
+                      style={{ width: "20px", height: "20px" }}
                     />
                   )}
-                  <span className="text-white font-bold text-xs">
+                  <span className="text-white font-bold text-[10px]">
                     {bulletin.bookmakerName}
                   </span>
                 </div>
               )}
             </div>
             <div className="text-right">
-              <div className="flex items-center justify-end gap-2 mb-1">
+              <div className="flex items-center justify-end gap-1.5">
                 <Instagram
-                  className="w-5 h-5 text-[#8F00FF]"
+                  className="w-4 h-4 text-[#8F00FF]"
                   style={{
-                    filter: "drop-shadow(0 0 4px rgba(143, 0, 255, 0.8))",
+                    filter: "drop-shadow(0 0 3px rgba(143, 0, 255, 0.8))",
                   }}
                 />
                 <Facebook
-                  className="w-5 h-5 text-[#00E0FF]"
+                  className="w-4 h-4 text-[#00E0FF]"
                   style={{
-                    filter: "drop-shadow(0 0 4px rgba(0, 224, 255, 0.8))",
+                    filter: "drop-shadow(0 0 3px rgba(0, 224, 255, 0.8))",
                   }}
                 />
                 <span
-                  className="text-white font-black text-sm"
-                  style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.8)" }}
+                  className="text-white font-black text-xs"
+                  style={{ textShadow: "1px 1px 2px rgba(0,0,0,0.8)" }}
                 >
                   owlclubpt
                 </span>
               </div>
               <div
-                className="text-white/60 text-[10px] uppercase tracking-wide font-bold"
+                className="text-white/60 text-[8px] uppercase tracking-wide font-bold mt-0.5"
                 style={{ textShadow: "1px 1px 2px rgba(0,0,0,0.8)" }}
               >
                 +18 • Apostas envolvem risco
