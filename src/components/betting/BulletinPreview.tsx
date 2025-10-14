@@ -113,24 +113,7 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
     return !specialLeagues.includes(leagueName);
   };
 
-  const shortName = (name: string, maxLength: number = 20) => {
-    if (name.length <= maxLength) return name;
-    
-    // For very short limits, just truncate
-    if (maxLength <= 8) {
-      return `${name.substring(0, maxLength - 1)}...`;
-    }
-    
-    // Smart truncation: try to keep whole words
-    const truncated = name.substring(0, maxLength);
-    const lastSpace = truncated.lastIndexOf(' ');
-    
-    if (lastSpace > maxLength * 0.6) {
-      return `${truncated.substring(0, lastSpace)}...`;
-    }
-    
-    return `${truncated}...`;
-  };
+  // Remove shortName function since it's no longer needed
 
   // Calculate dynamic sizing based on number of games
   const getDynamicStyles = () => {
@@ -138,11 +121,11 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
     const headerHeight = 160;
     const footerHeight = 140;
     const availableHeight = 1080 - headerHeight - footerHeight; // 780px
-    
+
     // Calculate all sizes based directly on game count for more aggressive scaling
     let leagueFontSize, teamFontSize, oddFontSize, marketFontSize;
     let logoSize, teamLogoSize, padding, teamNameMaxLength, gapSize;
-    
+
     if (count === 1) {
       leagueFontSize = 24;
       teamFontSize = 32;
@@ -245,7 +228,7 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
       teamNameMaxLength = 10;
       gapSize = 4;
     }
-    
+
     const totalGapSpace = count > 1 ? (count - 1) * gapSize : 0;
     const heightPerGame = (availableHeight - totalGapSpace) / count;
 
@@ -360,10 +343,7 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
             className="px-4 py-3 overflow-hidden"
             style={{ height: "780px" }}
           >
-            <div
-              className="h-full flex flex-col"
-              style={{ gap: styles.gap }}
-            >
+            <div className="h-full flex flex-col" style={{ gap: styles.gap }}>
               {bulletin.games.map((game, index) => {
                 const showLogos = hasTeamLogos(game.league.name);
                 return (
@@ -376,10 +356,11 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                       border: "2px solid #FFD300",
                       borderLeft: "6px solid #FFD300",
                       height: styles.gameHeight,
-                      padding: styles.padding,
+                      padding: `${parseInt(styles.padding) / 2}px`,
                       display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
                       clipPath: "polygon(0 0, 100% 0, 98% 100%, 0% 100%)",
                     }}
                   >
@@ -395,21 +376,45 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                         }}
                       />
                     )}
-
-                    {/* League & Odds Row */}
-                    <div
-                      className="flex items-center justify-between mb-1"
-                      style={{ gap: "8px" }}
-                    >
-                      <div className="flex items-center gap-2 flex-1 min-w-0">
-                        {game.league.logo && (
+                    {/* Left Section: League */}
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                      {game.league.logo && (
+                        <img
+                          src={safeImg(game.league.logo)}
+                          alt={game.league.name}
+                          style={{
+                            width: styles.logoSize,
+                            height: styles.logoSize,
+                            objectFit: "contain",
+                            aspectRatio: "1/1",
+                          }}
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                          }}
+                        />
+                      )}
+                      <span
+                        className="text-[#00E0FF] font-black uppercase tracking-wide"
+                        style={{
+                          fontSize: styles.leagueFontSize,
+                          textShadow: "1px 1px 2px rgba(0,0,0,0.8)",
+                          lineHeight: "1.1",
+                          maxWidth: "120px",
+                        }}
+                      >
+                        {game.league.name}
+                      </span>
+                    </div>
+                    /* Middle Section: Teams and Market */
+                    <div className="flex-1 flex flex-col items-center gap-1">
+                      <div className="flex items-center gap-1">
+                        {showLogos && game.homeTeam.strTeamBadge && (
                           <img
-                            src={safeImg(game.league.logo)}
-                            alt={game.league.name}
+                            src={safeImg(game.homeTeam.strTeamBadge)}
+                            alt={game.homeTeam.name}
                             style={{
-                              width: styles.logoSize,
-                              height: styles.logoSize,
-                              flexShrink: 0,
+                              width: styles.teamLogoSize,
+                              height: styles.teamLogoSize,
                               objectFit: "contain",
                               aspectRatio: "1/1",
                             }}
@@ -419,122 +424,86 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                           />
                         )}
                         <span
-                          className="text-[#00E0FF] font-black uppercase tracking-wide truncate"
+                          className="text-white font-black"
                           style={{
-                            fontSize: styles.leagueFontSize,
-                            textShadow: "1px 1px 2px rgba(0,0,0,0.8)",
-                            lineHeight: "1.1",
+                            fontSize: styles.teamFontSize,
+                            textShadow: "2px 2px 4px rgba(0,0,0,0.9)",
+                            maxWidth: "80px",
                           }}
                         >
-                          {game.league.name}
+                          {game.homeTeam.name}
                         </span>
-                      </div>
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        <div
-                          className="px-3 py-1 bg-black/60 border-2 border-[#FFD300]"
+                        <span
+                          className="text-[#8F00FF] font-black px-1"
+                          style={{ fontSize: styles.teamFontSize }}
+                        >
+                          VS
+                        </span>
+                        <span
+                          className="text-white font-black"
                           style={{
-                            clipPath:
-                              "polygon(8% 0%, 100% 0%, 92% 100%, 0% 100%)",
+                            fontSize: styles.teamFontSize,
+                            textShadow: "2px 2px 4px rgba(0,0,0,0.9)",
+                            maxWidth: "80px",
                           }}
                         >
-                          <span
-                            className="text-[#FFD300] font-black tracking-wider"
+                          {game.awayTeam.name}
+                        </span>
+                        {showLogos && game.awayTeam.strTeamBadge && (
+                          <img
+                            src={safeImg(game.awayTeam.strTeamBadge)}
+                            alt={game.awayTeam.name}
                             style={{
-                              fontSize: styles.oddFontSize,
-                              textShadow: "1px 1px 2px rgba(0,0,0,0.8)",
+                              width: styles.teamLogoSize,
+                              height: styles.teamLogoSize,
+                              objectFit: "contain",
+                              aspectRatio: "1/1",
                             }}
-                          >
-                            @{game.odds}
+                            onError={(e) => {
+                              e.currentTarget.style.display = "none";
+                            }}
+                          />
+                        )}
+                      </div>
+                      <div
+                        className="text-white/70 font-bold text-center whitespace-normal break-words"
+                        style={{
+                          fontSize: styles.marketFontSize,
+                          lineHeight: "1.1",
+                          maxWidth: "200px",
+                        }}
+                      >
+                        {game.market}
+                        {game.selection && (
+                          <span className="text-[#00E0FF] ml-1">
+                            •{" "}
+                            {game.selection === "home"
+                              ? game.homeTeam.name
+                              : game.awayTeam.name}
                           </span>
-                        </div>
-                        {getStatusIcon(game.status || "pending")}
+                        )}
                       </div>
                     </div>
-
-                    {/* Teams Row */}
-                    <div
-                      className="flex items-center justify-center gap-2"
-                      style={{ minWidth: 0 }}
-                    >
-                      {showLogos && game.homeTeam.strTeamBadge && (
-                        <img
-                          src={safeImg(game.homeTeam.strTeamBadge)}
-                          alt={game.homeTeam.name}
-                          style={{
-                            width: styles.teamLogoSize,
-                            height: styles.teamLogoSize,
-                            flexShrink: 0,
-                            objectFit: "contain",
-                            aspectRatio: "1/1",
-                          }}
-                          onError={(e) => {
-                            e.currentTarget.style.display = "none";
-                          }}
-                        />
-                      )}
-                      <span
-                        className="text-white font-black truncate"
+                    {/* Right Section: Odds */}
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                      <div
+                        className="px-2 py-1 bg-black/60 border-2 border-[#FFD300]"
                         style={{
-                          fontSize: styles.teamFontSize,
-                          textShadow: "2px 2px 4px rgba(0,0,0,0.9)",
-                          maxWidth: "35%",
-                          lineHeight: "1.1",
+                          clipPath:
+                            "polygon(8% 0%, 100% 0%, 92% 100%, 0% 100%)",
                         }}
                       >
-                        {shortName(game.homeTeam.name, styles.teamNameMaxLength)}
-                      </span>
-                      <span
-                        className="text-[#8F00FF] font-black px-2 flex-shrink-0"
-                        style={{ fontSize: styles.teamFontSize }}
-                      >
-                        VS
-                      </span>
-                      <span
-                        className="text-white font-black truncate"
-                        style={{
-                          fontSize: styles.teamFontSize,
-                          textShadow: "2px 2px 4px rgba(0,0,0,0.9)",
-                          maxWidth: "35%",
-                          lineHeight: "1.1",
-                        }}
-                      >
-                        {shortName(game.awayTeam.name, styles.teamNameMaxLength)}
-                      </span>
-                      {showLogos && game.awayTeam.strTeamBadge && (
-                        <img
-                          src={safeImg(game.awayTeam.strTeamBadge)}
-                          alt={game.awayTeam.name}
+                        <span
+                          className="text-[#FFD300] font-black tracking-wider"
                           style={{
-                            width: styles.teamLogoSize,
-                            height: styles.teamLogoSize,
-                            flexShrink: 0,
-                            objectFit: "contain",
-                            aspectRatio: "1/1",
+                            fontSize: styles.oddFontSize,
+                            textShadow: "1px 1px 2px rgba(0,0,0,0.8)",
                           }}
-                          onError={(e) => {
-                            e.currentTarget.style.display = "none";
-                          }}
-                        />
-                      )}
-                    </div>
-
-                    {/* Market Info */}
-                    <div
-                      className="text-white/70 font-bold text-center mt-1 whitespace-normal break-words"
-                      style={{
-                        fontSize: styles.marketFontSize,
-                        lineHeight: "1.1",
-                      }}
-                    >
-                      {shortName(game.market, Math.min(styles.teamNameMaxLength * 2, 40))}
-                      {game.selection && (
-                        <span className="text-[#00E0FF] ml-1">
-                          •{" "}
-                          {game.selection === "home"
-                            ? shortName(game.homeTeam.name, Math.floor(styles.teamNameMaxLength * 0.6))
-                            : shortName(game.awayTeam.name, Math.floor(styles.teamNameMaxLength * 0.6))}
+                        >
+                          @{game.odds}
                         </span>
-                      )}
+                      </div>
+                      {getStatusIcon(game.status || "pending")}
                     </div>
                   </div>
                 );
