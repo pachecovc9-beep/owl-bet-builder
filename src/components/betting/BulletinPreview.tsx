@@ -119,8 +119,8 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
   const getDynamicStyles = () => {
     const count = bulletin.games.length;
     const headerHeight = 160;
-    const footerHeight = 140;
-    const availableHeight = 1080 - headerHeight - footerHeight; // 780px
+    const footerHeight = 100;
+    const availableHeight = 1080 - headerHeight - footerHeight; // 820px
 
     // Calculate all sizes based directly on game count for more aggressive scaling
     let leagueFontSize, teamFontSize, oddFontSize, marketFontSize;
@@ -341,7 +341,7 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
           {/* Games Section - Dynamic & Compact */}
           <div
             className="px-4 py-3 overflow-hidden"
-            style={{ height: "780px" }}
+            style={{ height: "820px" }}
           >
             <div className="h-full flex flex-col" style={{ gap: styles.gap }}>
               {bulletin.games.map((game, index) => {
@@ -424,11 +424,10 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                           />
                         )}
                         <span
-                          className="text-white font-black"
+                          className="text-white font-black whitespace-nowrap"
                           style={{
                             fontSize: styles.teamFontSize,
                             textShadow: "2px 2px 4px rgba(0,0,0,0.9)",
-                            maxWidth: "80px",
                           }}
                         >
                           {game.homeTeam.name}
@@ -438,16 +437,6 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                           style={{ fontSize: styles.teamFontSize }}
                         >
                           VS
-                        </span>
-                        <span
-                          className="text-white font-black"
-                          style={{
-                            fontSize: styles.teamFontSize,
-                            textShadow: "2px 2px 4px rgba(0,0,0,0.9)",
-                            maxWidth: "80px",
-                          }}
-                        >
-                          {game.awayTeam.name}
                         </span>
                         {showLogos && game.awayTeam.strTeamBadge && (
                           <img
@@ -464,6 +453,15 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                             }}
                           />
                         )}
+                        <span
+                          className="text-white font-black whitespace-nowrap"
+                          style={{
+                            fontSize: styles.teamFontSize,
+                            textShadow: "2px 2px 4px rgba(0,0,0,0.9)",
+                          }}
+                        >
+                          {game.awayTeam.name}
+                        </span>
                       </div>
                       <div
                         className="text-white/70 font-bold text-center whitespace-normal break-words"
@@ -512,55 +510,55 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
           </div>
 
           {/* Footer Section - Urban Bold */}
-          <div className="absolute bottom-0 left-0 right-0 h-[140px] px-10 flex items-center justify-between border-t-4 border-[#FFD300] bg-black/30">
+          <div className="absolute bottom-0 left-0 right-0 h-[100px] px-10 flex items-center justify-between border-t-4 border-[#FFD300] bg-black/30">
             <div className="flex items-center gap-6">
               {bulletin.stake &&
                 bulletin.stake > 0 &&
                 bulletin.potentialReturn && (
                   <div className="flex items-center gap-3">
-                    <div
-                      className="text-center px-4 py-2 bg-black/60 border-2 border-white/20"
-                      style={{
-                        clipPath: "polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%)",
-                      }}
-                    >
-                      <div className="text-[#00E0FF] text-xs uppercase tracking-widest font-bold mb-1">
-                        Stake
-                      </div>
-                      <div
-                        className="text-white font-black text-2xl"
-                        style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.8)" }}
-                      >
-                        €{bulletin.stake.toFixed(2)}
-                      </div>
+                  <div
+                    className="text-center px-3 py-1 bg-black/60 border-2 border-white/20"
+                    style={{
+                      clipPath: "polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%)",
+                    }}
+                  >
+                    <div className="text-[#00E0FF] text-[10px] uppercase tracking-wide font-bold">
+                      Stake
                     </div>
-                    <div className="text-[#FFD300] text-4xl font-black">→</div>
                     <div
-                      className="text-center px-4 py-2 bg-black/60 border-2 border-[#00FF85]"
-                      style={{
-                        clipPath: "polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%)",
-                      }}
+                      className="text-white font-black text-lg"
+                      style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.8)" }}
                     >
-                      <div className="text-[#00E0FF] text-xs uppercase tracking-widest font-bold mb-1">
-                        Return
-                      </div>
-                      <div
-                        className="text-[#00FF85] font-black text-2xl"
-                        style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.8)" }}
-                      >
-                        €{bulletin.potentialReturn.toFixed(2)}
-                      </div>
+                      €{bulletin.stake.toFixed(2)}
                     </div>
+                  </div>
+                  <div className="text-[#FFD300] text-2xl font-black">→</div>
+                  <div
+                    className="text-center px-3 py-1 bg-black/60 border-2 border-[#00FF85]"
+                    style={{
+                      clipPath: "polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%)",
+                    }}
+                  >
+                    <div className="text-[#00E0FF] text-[10px] uppercase tracking-wide font-bold">
+                      Return
+                    </div>
+                    <div
+                      className="text-[#00FF85] font-black text-lg"
+                      style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.8)" }}
+                    >
+                      €{bulletin.potentialReturn.toFixed(2)}
+                    </div>
+                  </div>
                   </div>
                 )}
               {bulletin.bookmakerName && (
                 <div
-                  className="flex items-center gap-3 px-4 py-2 bg-black/60 border-2 border-[#FFD300]/30"
+                  className="flex items-center gap-2 px-3 py-1 bg-black/60 border-2 border-[#FFD300]/30"
                   style={{
                     clipPath: "polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%)",
                   }}
                 >
-                  <span className="text-white/60 text-xs font-bold uppercase">
+                  <span className="text-white/60 text-[10px] font-bold uppercase">
                     Odds by
                   </span>
                   {bulletin.bookmakerLogoUrl && (
@@ -568,38 +566,38 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                       src={safeImg(bulletin.bookmakerLogoUrl)}
                       alt={bulletin.bookmakerName}
                       className="object-contain"
-                      style={{ width: "32px", height: "32px" }}
+                      style={{ width: "24px", height: "24px" }}
                     />
                   )}
-                  <span className="text-white font-bold text-sm">
+                  <span className="text-white font-bold text-xs">
                     {bulletin.bookmakerName}
                   </span>
                 </div>
               )}
             </div>
-            <div className="text-right space-y-2">
-              <div className="flex items-center justify-end gap-3">
+            <div className="text-right">
+              <div className="flex items-center justify-end gap-2 mb-1">
                 <Instagram
-                  className="w-6 h-6 text-[#8F00FF]"
+                  className="w-5 h-5 text-[#8F00FF]"
                   style={{
                     filter: "drop-shadow(0 0 4px rgba(143, 0, 255, 0.8))",
                   }}
                 />
                 <Facebook
-                  className="w-6 h-6 text-[#00E0FF]"
+                  className="w-5 h-5 text-[#00E0FF]"
                   style={{
                     filter: "drop-shadow(0 0 4px rgba(0, 224, 255, 0.8))",
                   }}
                 />
                 <span
-                  className="text-white font-black text-lg"
+                  className="text-white font-black text-sm"
                   style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.8)" }}
                 >
                   owlclubpt
                 </span>
               </div>
               <div
-                className="text-white/60 text-xs uppercase tracking-wider font-bold"
+                className="text-white/60 text-[10px] uppercase tracking-wide font-bold"
                 style={{ textShadow: "1px 1px 2px rgba(0,0,0,0.8)" }}
               >
                 +18 • Apostas envolvem risco
