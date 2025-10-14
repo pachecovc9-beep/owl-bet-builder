@@ -47,6 +47,8 @@ export interface BettingGame {
   selection: string;
   bookmaker?: string;
   status?: "pending" | "won" | "lost";
+  matchDate?: string;
+  matchTime?: string;
 }
 
 export interface BettingBulletin {

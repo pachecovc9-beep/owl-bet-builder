@@ -376,34 +376,57 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                         }}
                       />
                     )}
-                    {/* Left Section: League */}
-                    <div className="flex items-center gap-1 flex-shrink-0">
-                      {game.league.logo && (
-                        <img
-                          src={safeImg(game.league.logo)}
-                          alt={game.league.name}
+                    {/* Left Section: League and Date/Time */}
+                    <div className="flex flex-col gap-0.5 flex-shrink-0">
+                      <div className="flex items-center gap-1">
+                        {game.league.logo && (
+                          <img
+                            src={safeImg(game.league.logo)}
+                            alt={game.league.name}
+                            style={{
+                              width: styles.logoSize,
+                              height: styles.logoSize,
+                              objectFit: "contain",
+                              aspectRatio: "1/1",
+                            }}
+                            onError={(e) => {
+                              e.currentTarget.style.display = "none";
+                            }}
+                          />
+                        )}
+                        <span
+                          className="text-[#00E0FF] font-black uppercase tracking-wide"
                           style={{
-                            width: styles.logoSize,
-                            height: styles.logoSize,
-                            objectFit: "contain",
-                            aspectRatio: "1/1",
+                            fontSize: styles.leagueFontSize,
+                            textShadow: "1px 1px 2px rgba(0,0,0,0.8)",
+                            lineHeight: "1.1",
+                            maxWidth: "120px",
                           }}
-                          onError={(e) => {
-                            e.currentTarget.style.display = "none";
+                        >
+                          {game.league.name}
+                        </span>
+                      </div>
+                      {(game.matchDate || game.matchTime) && (
+                        <div
+                          className="text-white/60 font-bold whitespace-nowrap"
+                          style={{
+                            fontSize: `${Math.max(8, parseInt(styles.leagueFontSize) - 4)}px`,
+                            lineHeight: "1",
                           }}
-                        />
+                        >
+                          {game.matchDate && (
+                            <span>
+                              {new Date(game.matchDate).toLocaleDateString("pt-PT", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                              })}
+                            </span>
+                          )}
+                          {game.matchDate && game.matchTime && <span> • </span>}
+                          {game.matchTime && <span>{game.matchTime}</span>}
+                        </div>
                       )}
-                      <span
-                        className="text-[#00E0FF] font-black uppercase tracking-wide"
-                        style={{
-                          fontSize: styles.leagueFontSize,
-                          textShadow: "1px 1px 2px rgba(0,0,0,0.8)",
-                          lineHeight: "1.1",
-                          maxWidth: "120px",
-                        }}
-                      >
-                        {game.league.name}
-                      </span>
                     </div>
                     /* Middle Section: Teams and Market */
                     <div className="flex-1 flex flex-col items-center gap-1">

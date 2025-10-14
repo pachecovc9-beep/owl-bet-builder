@@ -540,6 +540,29 @@ const BettingWizard: React.FC<BettingWizardProps> = ({
                     </div>
                   </div>
 
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label>Data do Jogo (opcional)</Label>
+                      <Input
+                        type="date"
+                        value={game.matchDate || ""}
+                        onChange={(e) =>
+                          updateGameField(index, "matchDate", e.target.value)
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Label>Hora do Jogo (opcional)</Label>
+                      <Input
+                        type="time"
+                        value={game.matchTime || ""}
+                        onChange={(e) =>
+                          updateGameField(index, "matchTime", e.target.value)
+                        }
+                      />
+                    </div>
+                  </div>
+
                   {/* Seleção específica do mercado */}
                   {game.market === "Vencedor do Jogo" && (
                     <div className="grid grid-cols-2 gap-3">
