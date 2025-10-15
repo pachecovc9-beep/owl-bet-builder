@@ -233,7 +233,7 @@ const BettingWizard: React.FC<BettingWizardProps> = ({
   const handleComplete = () => {
     onComplete(
       games,
-      isMultiple ? stake : undefined,
+      isMultiple && stake > 0 ? stake : undefined,
       bookmakerEnabled ? bookmakerName : undefined,
       bookmakerEnabled ? bookmakerLogoUrl : undefined
     );
