@@ -340,10 +340,10 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
 
           {/* Games Section - Dynamic & Compact */}
           <div
-            className="px-4 py-3 overflow-hidden"
+            className="px-4 py-3 pb-6 overflow-hidden"
             style={{ height: "840px" }}
           >
-            <div className="h-full flex flex-col" style={{ gap: styles.gap }}>
+            <div className="flex flex-col" style={{ gap: styles.gap }}>
               {bulletin.games.map((game, index) => {
                 const showLogos = hasTeamLogos(game.league.name);
                 return (
@@ -428,8 +428,8 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                         </div>
                       )}
                     </div>
-                    /* Middle Section: Teams and Market */
-                    <div className="flex-1 flex flex-col items-center gap-1">
+                    {/* Middle Section: Teams and Market */}
+                    <div className="flex-1 flex flex-col items-center justify-center gap-1">
                       <div className="flex items-center gap-1">
                         {showLogos && game.homeTeam.strTeamBadge && (
                           <img
