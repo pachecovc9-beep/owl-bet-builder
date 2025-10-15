@@ -120,7 +120,7 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
     const count = bulletin.games.length;
     const headerHeight = 160;
     const footerHeight = 80;
-    const availableHeight = 1080 - headerHeight - footerHeight; // 840px
+    const availableHeight = 1080 - headerHeight - footerHeight - 20; // 820px (extra margin for footer)
 
     // Calculate all sizes based directly on game count for more aggressive scaling
     let leagueFontSize, teamFontSize, oddFontSize, marketFontSize;
@@ -340,8 +340,8 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
 
           {/* Games Section - Dynamic & Compact */}
           <div
-            className="px-4 py-3 pb-6 overflow-hidden"
-            style={{ height: "840px" }}
+            className="px-4 py-3 pb-10 overflow-hidden"
+            style={{ height: "820px" }}
           >
             <div className="flex flex-col" style={{ gap: styles.gap }}>
               {bulletin.games.map((game, index) => {
@@ -487,16 +487,16 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                         </span>
                       </div>
                       <div
-                        className="text-white/70 font-bold text-center whitespace-normal break-words"
+                        className="text-white/70 font-bold text-center whitespace-normal break-words flex flex-col items-center"
                         style={{
                           fontSize: styles.marketFontSize,
                           lineHeight: "1.1",
                           maxWidth: "200px",
                         }}
                       >
-                        {game.market}
+                        <span>{game.market}</span>
                         {game.selection && (
-                          <span className="text-[#00E0FF] ml-1">
+                          <span className="text-[#00E0FF]">
                             •{" "}
                             {game.selection === "home"
                               ? game.homeTeam.name
@@ -536,8 +536,7 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
           <div className="absolute bottom-0 left-0 right-0 h-[80px] px-8 flex items-center justify-between border-t-3 border-[#FFD300] bg-black/30">
             <div className="flex items-center gap-4">
               {bulletin.stake &&
-                bulletin.stake > 0 &&
-                bulletin.potentialReturn && (
+                bulletin.stake > 0 && (
                   <div className="flex items-center gap-2">
                   <div
                     className="text-center px-2 py-0.5 bg-black/60 border border-white/20"
