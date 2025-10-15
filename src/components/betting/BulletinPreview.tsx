@@ -29,7 +29,7 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
       toast.info("A gerar imagem...");
 
       const canvas = await html2canvas(bulletinRef.current, {
-        scale: 1,
+        scale: 3,
         width: 1080,
         height: 1080,
         backgroundColor: "#0B0B10",
@@ -376,8 +376,12 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                         }}
                       />
                     )}
+
                     {/* Left Section: League and Date/Time */}
-                    <div className="flex flex-col gap-0.5 flex-shrink-0">
+                    <div
+                      className="flex flex-col gap-0.5 flex-shrink-0"
+                      style={{ minWidth: "200px", maxWidth: "200px" }}
+                    >
                       <div className="flex items-center gap-1">
                         {game.league.logo && (
                           <img
@@ -434,24 +438,44 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                         </div>
                       )}
                     </div>
+
                     {/* Middle Section: Teams and Market */}
                     <div className="flex-1 flex flex-col items-center justify-center gap-1">
                       <div className="flex items-center justify-center w-full">
-                        {/* Home Team - Right Aligned */}
-                        <span
-                          className="flex-1 text-right font-black text-white truncate"
-                          style={{
-                            fontSize: styles.teamFontSize,
-                            textShadow: "2px 2px 4px rgba(0,0,0,0.9)",
-                          }}
-                        >
-                          {game.homeTeam.name}
-                        </span>
+                        {/* Home Team + Logo */}
+                        <div className="flex-1 flex items-center justify-end gap-1">
+                          {showLogos && game.homeTeam.strTeamBadge && (
+                            <img
+                              src={safeImg(game.homeTeam.strTeamBadge)}
+                              alt={game.homeTeam.name}
+                              style={{
+                                width: styles.teamLogoSize,
+                                height: styles.teamLogoSize,
+                                objectFit: "contain",
+                                aspectRatio: "1/1",
+                              }}
+                              onError={(e) => {
+                                e.currentTarget.style.display = "none";
+                              }}
+                            />
+                          )}
+                          <span
+                            className="text-right font-black text-white truncate"
+                            style={{
+                              fontSize: styles.teamFontSize,
+                              textShadow: "2px 2px 4px rgba(0,0,0,0.9)",
+                              lineHeight: "1.2",
+                              paddingBottom: "2px",
+                            }}
+                          >
+                            {game.homeTeam.name}
+                          </span>
+                        </div>
 
                         {/* VS - Centered with Fixed Width */}
                         <span
                           className="text-[#8F00FF] font-black text-center flex-shrink-0"
-                          style={{ 
+                          style={{
                             fontSize: styles.teamFontSize,
                             minWidth: "50px",
                           }}
@@ -459,17 +483,38 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                           VS
                         </span>
 
-                        {/* Away Team - Left Aligned */}
-                        <span
-                          className="flex-1 text-left font-black text-white truncate"
-                          style={{
-                            fontSize: styles.teamFontSize,
-                            textShadow: "2px 2px 4px rgba(0,0,0,0.9)",
-                          }}
-                        >
-                          {game.awayTeam.name}
-                        </span>
+                        {/* Away Team + Logo */}
+                        <div className="flex-1 flex items-center justify-start gap-1">
+                          {showLogos && game.awayTeam.strTeamBadge && (
+                            <img
+                              src={safeImg(game.awayTeam.strTeamBadge)}
+                              alt={game.awayTeam.name}
+                              style={{
+                                width: styles.teamLogoSize,
+                                height: styles.teamLogoSize,
+                                objectFit: "contain",
+                                aspectRatio: "1/1",
+                              }}
+                              onError={(e) => {
+                                e.currentTarget.style.display = "none";
+                              }}
+                            />
+                          )}
+                          <span
+                            className="text-left font-black text-white truncate"
+                            style={{
+                              fontSize: styles.teamFontSize,
+                              textShadow: "2px 2px 4px rgba(0,0,0,0.9)",
+                              lineHeight: "1.2",
+                              paddingBottom: "2px",
+                            }}
+                          >
+                            {game.awayTeam.name}
+                          </span>
+                        </div>
                       </div>
+
+                      {/* Market Section */}
                       <div
                         className="text-white/70 font-bold text-center whitespace-normal break-words flex flex-col items-center"
                         style={{
@@ -488,6 +533,7 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                         )}
                       </div>
                     </div>
+
                     {/* Right Section: Odds */}
                     <div className="flex items-center gap-1 flex-shrink-0">
                       <div
@@ -537,22 +583,22 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                     </div>
                   </div>
                   <div className="text-[#FFD300] text-xl font-black">→</div>
-                    <div
-                      className="text-center px-2 py-0.5 bg-black/60 border border-[#00FF85]"
-                      style={{
-                        clipPath: "polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%)",
-                      }}
-                    >
-                      <div className="text-[#00E0FF] text-[8px] uppercase tracking-wide font-bold">
-                        Return
-                      </div>
-                      <div
-                        className="text-[#00FF85] font-black text-sm"
-                        style={{ textShadow: "1px 1px 2px rgba(0,0,0,0.8)" }}
-                      >
-                        €{bulletin.potentialReturn?.toFixed(2)}
-                      </div>
+                  <div
+                    className="text-center px-2 py-0.5 bg-black/60 border border-[#00FF85]"
+                    style={{
+                      clipPath: "polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%)",
+                    }}
+                  >
+                    <div className="text-[#00E0FF] text-[8px] uppercase tracking-wide font-bold">
+                      Return
                     </div>
+                    <div
+                      className="text-[#00FF85] font-black text-sm"
+                      style={{ textShadow: "1px 1px 2px rgba(0,0,0,0.8)" }}
+                    >
+                      €{bulletin.potentialReturn?.toFixed(2)}
+                    </div>
+                  </div>
                 </div>
               )}
               {bulletin.bookmakerName && (
