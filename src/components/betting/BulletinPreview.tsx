@@ -340,8 +340,8 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
 
           {/* Games Section - Dynamic & Compact */}
           <div
-            className="px-4 py-3 pb-10 overflow-hidden"
-            style={{ height: "820px" }}
+            className="flex-1 px-4 py-3 pb-10 overflow-hidden flex flex-col justify-between"
+            style={{ minHeight: "calc(100% - 240px)" }} // 160px header + 80px footer
           >
             <div className="flex flex-col" style={{ gap: styles.gap }}>
               {bulletin.games.map((game, index) => {
@@ -410,17 +410,23 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                         <div
                           className="text-white/60 font-bold whitespace-nowrap"
                           style={{
-                            fontSize: `${Math.max(8, parseInt(styles.leagueFontSize) - 4)}px`,
+                            fontSize: `${Math.max(
+                              8,
+                              parseInt(styles.leagueFontSize) - 4
+                            )}px`,
                             lineHeight: "1",
                           }}
                         >
                           {game.matchDate && (
                             <span>
-                              {new Date(game.matchDate).toLocaleDateString("pt-PT", {
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "numeric",
-                              })}
+                              {new Date(game.matchDate).toLocaleDateString(
+                                "pt-PT",
+                                {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "numeric",
+                                }
+                              )}
                             </span>
                           )}
                           {game.matchDate && game.matchTime && <span> • </span>}
@@ -535,9 +541,8 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
           {/* Footer Section - Urban Bold */}
           <div className="absolute bottom-0 left-0 right-0 h-[80px] px-8 flex items-center justify-between border-t-3 border-[#FFD300] bg-black/30">
             <div className="flex items-center gap-4">
-              {bulletin.stake &&
-                bulletin.stake > 0 && (
-                  <div className="flex items-center gap-2">
+              {bulletin.stake && bulletin.stake > 0 && (
+                <div className="flex items-center gap-2">
                   <div
                     className="text-center px-2 py-0.5 bg-black/60 border border-white/20"
                     style={{
@@ -571,8 +576,8 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                       €{bulletin.potentialReturn.toFixed(2)}
                     </div>
                   </div>
-                  </div>
-                )}
+                </div>
+              )}
               {bulletin.bookmakerName && (
                 <div
                   className="flex items-center gap-1.5 px-2 py-0.5 bg-black/60 border border-[#FFD300]/30"
