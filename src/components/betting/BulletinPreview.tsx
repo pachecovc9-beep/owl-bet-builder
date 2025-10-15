@@ -436,61 +436,73 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                     </div>
                     {/* Middle Section: Teams and Market */}
                     <div className="flex-1 flex flex-col items-center justify-center gap-1">
-                      <div className="flex items-center gap-1">
-                        {showLogos && game.homeTeam.strTeamBadge && (
-                          <img
-                            src={safeImg(game.homeTeam.strTeamBadge)}
-                            alt={game.homeTeam.name}
+                      <div className="flex items-center justify-center w-full">
+                        {/* Home Team - Right Aligned */}
+                        <div className="flex-1 flex items-center justify-end gap-1">
+                          <span
+                            className="text-white font-black whitespace-nowrap"
                             style={{
-                              width: styles.teamLogoSize,
-                              height: styles.teamLogoSize,
-                              objectFit: "contain",
-                              aspectRatio: "1/1",
+                              fontSize: styles.teamFontSize,
+                              textShadow: "2px 2px 4px rgba(0,0,0,0.9)",
                             }}
-                            onError={(e) => {
-                              e.currentTarget.style.display = "none";
-                            }}
-                          />
-                        )}
+                          >
+                            {game.homeTeam.name}
+                          </span>
+                          {showLogos && game.homeTeam.strTeamBadge && (
+                            <img
+                              src={safeImg(game.homeTeam.strTeamBadge)}
+                              alt={game.homeTeam.name}
+                              style={{
+                                width: styles.teamLogoSize,
+                                height: styles.teamLogoSize,
+                                objectFit: "contain",
+                                aspectRatio: "1/1",
+                              }}
+                              onError={(e) => {
+                                e.currentTarget.style.display = "none";
+                              }}
+                            />
+                          )}
+                        </div>
+
+                        {/* VS - Centered with Fixed Width */}
                         <span
-                          className="text-white font-black whitespace-nowrap"
-                          style={{
+                          className="text-[#8F00FF] font-black text-center"
+                          style={{ 
                             fontSize: styles.teamFontSize,
-                            textShadow: "2px 2px 4px rgba(0,0,0,0.9)",
+                            minWidth: "40px",
                           }}
-                        >
-                          {game.homeTeam.name}
-                        </span>
-                        <span
-                          className="text-[#8F00FF] font-black px-1"
-                          style={{ fontSize: styles.teamFontSize }}
                         >
                           VS
                         </span>
-                        {showLogos && game.awayTeam.strTeamBadge && (
-                          <img
-                            src={safeImg(game.awayTeam.strTeamBadge)}
-                            alt={game.awayTeam.name}
+
+                        {/* Away Team - Left Aligned */}
+                        <div className="flex-1 flex items-center justify-start gap-1">
+                          {showLogos && game.awayTeam.strTeamBadge && (
+                            <img
+                              src={safeImg(game.awayTeam.strTeamBadge)}
+                              alt={game.awayTeam.name}
+                              style={{
+                                width: styles.teamLogoSize,
+                                height: styles.teamLogoSize,
+                                objectFit: "contain",
+                                aspectRatio: "1/1",
+                              }}
+                              onError={(e) => {
+                                e.currentTarget.style.display = "none";
+                              }}
+                            />
+                          )}
+                          <span
+                            className="text-white font-black whitespace-nowrap"
                             style={{
-                              width: styles.teamLogoSize,
-                              height: styles.teamLogoSize,
-                              objectFit: "contain",
-                              aspectRatio: "1/1",
+                              fontSize: styles.teamFontSize,
+                              textShadow: "2px 2px 4px rgba(0,0,0,0.9)",
                             }}
-                            onError={(e) => {
-                              e.currentTarget.style.display = "none";
-                            }}
-                          />
-                        )}
-                        <span
-                          className="text-white font-black whitespace-nowrap"
-                          style={{
-                            fontSize: styles.teamFontSize,
-                            textShadow: "2px 2px 4px rgba(0,0,0,0.9)",
-                          }}
-                        >
-                          {game.awayTeam.name}
-                        </span>
+                          >
+                            {game.awayTeam.name}
+                          </span>
+                        </div>
                       </div>
                       <div
                         className="text-white/70 font-bold text-center whitespace-normal break-words flex flex-col items-center"
