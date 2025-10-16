@@ -460,12 +460,15 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                             />
                           )}
                           <span
-                            className="text-right font-black text-white truncate"
+                            className="text-right font-black text-white"
                             style={{
                               fontSize: styles.teamFontSize,
                               textShadow: "2px 2px 4px rgba(0,0,0,0.9)",
-                              lineHeight: "1.2",
-                              paddingBottom: "2px",
+                              lineHeight: "1.5",
+                              overflow: "visible",
+                              maxWidth: "200px",
+                              whiteSpace: "nowrap",
+                              textOverflow: "ellipsis",
                             }}
                           >
                             {game.homeTeam.name}
@@ -501,12 +504,15 @@ const BulletinPreview: React.FC<BulletinPreviewProps> = ({
                             />
                           )}
                           <span
-                            className="text-left font-black text-white truncate"
+                            className="text-left font-black text-white"
                             style={{
                               fontSize: styles.teamFontSize,
                               textShadow: "2px 2px 4px rgba(0,0,0,0.9)",
-                              lineHeight: "1.2",
-                              paddingBottom: "2px",
+                              lineHeight: "1.5",
+                              overflow: "visible",
+                              maxWidth: "200px",
+                              whiteSpace: "nowrap",
+                              textOverflow: "ellipsis",
                             }}
                           >
                             {game.awayTeam.name}
